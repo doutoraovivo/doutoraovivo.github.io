@@ -1,0 +1,377 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Doutor ao Vivo - API - Person",
+        "description": "All about your customers",
+        "version": "1.0",
+        "contact": {}
+    },
+    "tags": [],
+    "servers": [],
+    "components": {
+        "schemas": {
+            "AddressSchema": {
+                "type": "object",
+                "properties": {
+                    "zip_code": {
+                        "type": "string"
+                    },
+                    "street": {
+                        "type": "string"
+                    },
+                    "number": {
+                        "type": "string"
+                    },
+                    "complement": {
+                        "type": "string"
+                    },
+                    "neighborhood": {
+                        "type": "string"
+                    },
+                    "city": {
+                        "type": "number"
+                    },
+                    "state": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "zip_code",
+                    "street",
+                    "number",
+                    "neighborhood",
+                    "city",
+                    "state"
+                ]
+            },
+            "PersonCreateRequestDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique Identificator"
+                    },
+                    "parent_id": {
+                        "type": "string",
+                        "description": "Id of this person legal responsible"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name"
+                    },
+                    "cpf": {
+                        "type": "string",
+                        "description": "CPF",
+                        "example": "94819089846",
+                        "pattern": "\\d{2}\\d{4}\\d{4}"
+                    },
+                    "registration": {
+                        "type": "string",
+                        "description": "Special Field like registration ID or social service ID"
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Birth Date"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "description": "Gender",
+                        "enum": [
+                            "F",
+                            "M"
+                        ]
+                    },
+                    "phone": {
+                        "type": "string",
+                        "description": "Phone Number (if applicable)",
+                        "example": "1112345678",
+                        "pattern": "\\d{2}\\d{4}\\d{4}"
+                    },
+                    "cell_phone": {
+                        "type": "string",
+                        "description": "Phone Number (if applicable)",
+                        "example": "11912345678",
+                        "pattern": "\\d{2}\\d{5}\\d{4}"
+                    },
+                    "profession": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "example": "Accountant"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "person@example.dav.med.br"
+                    },
+                    "picture": {
+                        "type": "string",
+                        "pattern": "(data:image\\/[^;]+;base64[^\"]+)",
+                        "example": "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+                    },
+                    "address": {
+                        "additionalProperties": false,
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AddressSchema"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "name",
+                    "birth_date",
+                    "email"
+                ]
+            },
+            "PersonCreateResponseDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique Identificator"
+                    }
+                }
+            },
+            "PersonReadResponseDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique Identificator"
+                    },
+                    "parent_id": {
+                        "type": "string",
+                        "description": "Id of this person legal responsible"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name"
+                    },
+                    "cpf": {
+                        "type": "string",
+                        "description": "CPF",
+                        "example": "94819089846",
+                        "pattern": "\\d{2}\\d{4}\\d{4}"
+                    },
+                    "registration": {
+                        "type": "string",
+                        "description": "Special Field like registration ID or social service ID"
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Birth Date"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "description": "Gender",
+                        "enum": [
+                            "F",
+                            "M"
+                        ]
+                    },
+                    "phone": {
+                        "type": "string",
+                        "description": "Phone Number (if applicable)",
+                        "example": "1112345678",
+                        "pattern": "\\d{2}\\d{4}\\d{4}"
+                    },
+                    "cell_phone": {
+                        "type": "string",
+                        "description": "Phone Number (if applicable)",
+                        "example": "11912345678",
+                        "pattern": "\\d{2}\\d{5}\\d{4}"
+                    },
+                    "profession": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "example": "Accountant"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "person@example.dav.med.br"
+                    },
+                    "picture": {
+                        "type": "string",
+                        "pattern": "(data:image\\/[^;]+;base64[^\"]+)",
+                        "example": "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
+                    },
+                    "address": {
+                        "additionalProperties": false,
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AddressSchema"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "name",
+                    "birth_date",
+                    "email"
+                ]
+            }
+        },
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "x-api-key"
+            }
+        }
+    },
+    "paths": {
+        "/person": {
+            "post": {
+                "operationId": "CreateController_create",
+                "summary": "cria um objeto PERSON",
+                "description": "* PERSON representa seu cliente no atendimento.\n* PERSON pode ser independente ou ter um responsável legal, basta colocar o ID do PERSON responsável no campo parent_ID\n* O ID de PERSON pode ser informado, caso você integrador queira usar o mesmo ID que já usa em seus sistema, simplificando a integração\n* Se não informar o ID, você precisa guardar o ID gerado em formato UUID para usar em outras consultas ou na inclusão de um agendamento.",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "$ref": "#/components/schemas/PersonCreateRequestDto"
+                            },
+                            "examples": {
+                                "requiredOnly": {
+                                    "description": "Somente campos obrigatórios. Note que o campo ID segue a regra descrita acima.",
+                                    "summary": "Somente campos obrigatórios",
+                                    "value": {
+                                        "id": "123456",
+                                        "name": "Roberval Juvencio Lazaroti",
+                                        "birth_date": "1976-01-23",
+                                        "email": "roberval@lazaroti.com.br"
+                                    }
+                                },
+                                "full": {
+                                    "summary": "Todos os campos",
+                                    "description": "Exemplo com todos os campos possíveis",
+                                    "value": {
+                                        "id": "123456",
+                                        "name": "Roberval Juvencio Lazaroti",
+                                        "birth_date": "1976-01-23",
+                                        "email": "roberval@lazaroti.com.br",
+                                        "cpf": "94819089846",
+                                        "gender": "M",
+                                        "cell_phone": "11912345678",
+                                        "phone": "1112345678",
+                                        "profession": "Agricultor",
+                                        "registration": "2312312",
+                                        "address": {
+                                            "state": "SP",
+                                            "city": 3505708,
+                                            "number": "238",
+                                            "neighborhood": "Dezoito do Forte",
+                                            "complement": "4o andar",
+                                            "street": "Avenida Copacabana",
+                                            "zip_code": "06472000"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Person successfully created.",
+                        "examples": {
+                            "lalala": {}
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PersonCreateResponseDto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "create"
+                ],
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
+            },
+            "get": {
+                "operationId": "ReadController_getAll",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "Person List",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PersonReadResponseDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "read"
+                ],
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
+            }
+        },
+        "/person/{id}": {
+            "get": {
+                "operationId": "ReadController_get",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Person",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PersonReadResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Person not found"
+                    }
+                },
+                "tags": [
+                    "read"
+                ],
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ]
+}
