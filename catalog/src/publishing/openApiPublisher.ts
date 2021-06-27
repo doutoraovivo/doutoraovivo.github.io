@@ -21,7 +21,9 @@ export class OpenApiPublisher implements IPublisher {
             for (const blobKey of downloadKeys) {
                 const specKey = blobKey.startsWith("/") ? blobKey.substr(1) : blobKey;
                 const specContent = await this.specsBlobStorage.downloadBlob(specKey);
+                console.debug('specContent', specContent);
                 const openApiSpec: OpenApiSpec30 = JSON.parse(Utils.uint8ArrayToString(specContent));
+                console.debug('openApiSpec', specContent);
 
                 openApiIndexBuilder.appendSpec(specKey, openApiSpec);
 
