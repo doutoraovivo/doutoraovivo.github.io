@@ -1,0 +1,629 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Doutor ao Vivo - API - Person",
+    "description": "\nEsta API o cliente DaV utiliza para integrar com sua própria base de clientes/pacientes\n      ",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "AddressSchema": {
+        "type": "object",
+        "properties": {
+          "zip_code": {
+            "type": "string",
+            "pattern": "^\\d{5}\\d{3}$",
+            "description": "CEP (Codigo de Enderecamento Postal)",
+            "example": "06010210"
+          },
+          "street": {
+            "type": "string",
+            "description": "Logradouro",
+            "example": "Avenida Copacabana"
+          },
+          "number": {
+            "type": "string",
+            "description": "Número do recinto",
+            "example": "238"
+          },
+          "complement": {
+            "type": "string",
+            "description": "Complemento do Endereço",
+            "example": "4o andar"
+          },
+          "neighborhood": {
+            "type": "string",
+            "description": "Bairro",
+            "example": "Dezoito do Forte"
+          },
+          "city": {
+            "type": "number",
+            "description": "Código do município do IBGE (https://www.ibge.gov.br/explica/codigos-dos-municipios.php)",
+            "example": 3505708
+          },
+          "state": {
+            "type": "string",
+            "description": "Estado (UF)",
+            "example": "SP",
+            "enum": [
+              "AC",
+              "AL",
+              "AP",
+              "AM",
+              "BA",
+              "CE",
+              "DF",
+              "ES",
+              "GO",
+              "MA",
+              "MT",
+              "MS",
+              "MG",
+              "PR",
+              "PB",
+              "PA",
+              "PE",
+              "PI",
+              "RN",
+              "RS",
+              "RJ",
+              "RO",
+              "RR",
+              "SC",
+              "SE",
+              "SP",
+              "TO"
+            ]
+          }
+        },
+        "required": [
+          "zip_code",
+          "street",
+          "number",
+          "neighborhood",
+          "city",
+          "state"
+        ]
+      },
+      "PersonCreateRequestSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator"
+          },
+          "parent_id": {
+            "type": "string",
+            "description": "Id of this person legal responsible"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "CPF",
+            "example": "94819089846",
+            "pattern": "^\\d{3}\\d{3}\\d{3}\\d{2}$"
+          },
+          "registration": {
+            "type": "string",
+            "description": "Special Field like registration ID or social service ID"
+          },
+          "birth_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Birth Date"
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender",
+            "enum": [
+              "F",
+              "M"
+            ]
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "1112345678",
+            "pattern": "\\d{2}\\d{4}\\d{4}"
+          },
+          "cell_phone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "11912345678",
+            "pattern": "\\d{2}\\d{5}\\d{4}"
+          },
+          "profession": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "Accountant"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "person@example.dav.med.br"
+          },
+          "address": {
+            "description": "Endereço",
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressSchema"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "birth_date",
+          "email"
+        ]
+      },
+      "PersonCreateResponseSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "i18nMessageConfig": {
+        "type": "object",
+        "properties": {}
+      },
+      "DavHttpExceptionDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "description": "HTTP Response Code"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error Message"
+          },
+          "i18n": {
+            "description": "For use with Frontend only",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/i18nMessageConfig"
+              }
+            ]
+          },
+          "detail": {
+            "description": "Individual Messages",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "trace": {
+            "type": "string",
+            "description": "Trace ID - pass it to DaV support"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "trace"
+        ]
+      },
+      "PersonReadResponseSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator"
+          },
+          "parent_id": {
+            "type": "string",
+            "description": "Id of this person legal responsible"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "CPF",
+            "example": "94819089846",
+            "pattern": "^\\d{3}\\d{3}\\d{3}\\d{2}$"
+          },
+          "registration": {
+            "type": "string",
+            "description": "Special Field like registration ID or social service ID"
+          },
+          "birth_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Birth Date"
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender",
+            "enum": [
+              "F",
+              "M"
+            ]
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "1112345678",
+            "pattern": "\\d{2}\\d{4}\\d{4}"
+          },
+          "cell_phone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "11912345678",
+            "pattern": "\\d{2}\\d{5}\\d{4}"
+          },
+          "profession": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "Accountant"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "person@example.dav.med.br"
+          },
+          "address": {
+            "description": "Endereço",
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressSchema"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "birth_date",
+          "email"
+        ]
+      },
+      "PersonUpdateRequestSchema": {
+        "type": "object",
+        "properties": {
+          "parent_id": {
+            "type": "string",
+            "description": "Id of this person legal responsible"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "CPF",
+            "example": "94819089846",
+            "pattern": "^\\d{3}\\d{3}\\d{3}\\d{2}$"
+          },
+          "registration": {
+            "type": "string",
+            "description": "Special Field like registration ID or social service ID"
+          },
+          "birth_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Birth Date"
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender",
+            "enum": [
+              "F",
+              "M"
+            ]
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "1112345678",
+            "pattern": "\\d{2}\\d{4}\\d{4}"
+          },
+          "cell_phone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "11912345678",
+            "pattern": "\\d{2}\\d{5}\\d{4}"
+          },
+          "profession": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "Accountant"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "person@example.dav.med.br"
+          },
+          "address": {
+            "description": "Endereço",
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressSchema"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "birth_date",
+          "email"
+        ]
+      },
+      "PersonUpdateResponseSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    }
+  },
+  "paths": {
+    "/person": {
+      "post": {
+        "operationId": "CreateController_create",
+        "summary": "Cria um objeto PERSON",
+        "description": "\nO que é PERSON?:\n* PERSON representa seu cliente (paciente) no em um atendimento\n* PERSON pode ser independente ou ter um responsável legal, basta colocar o ID do PERSON responsável no campo parent_ID\n* O ID de PERSON pode ser informado, caso você integrador queira usar o mesmo ID que já usa em seu sistema, simplificando a integração\n* Se não informar o ID, será gerado um em formato UUID, e deverá ser utilizado para um novo agendamento.\n\nCampos opcionais que precisam ser informados (e ser únicos na base) caso:\n* email: caso o cliente precise receber emails\n* cell_phone: caso o cliente precise receber SMS ou Whatsapp\n    ",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "$ref": "#/components/schemas/PersonCreateRequestSchema"
+              },
+              "examples": {
+                "requiredOnly": {
+                  "description": "Somente campos obrigatórios. Note que o campo ID segue a regra descrita acima.",
+                  "summary": "Somente campos obrigatórios",
+                  "value": {
+                    "id": "123456",
+                    "name": "Roberval Juvencio Lazaroti",
+                    "birth_date": "1976-01-23",
+                    "email": "roberval@lazaroti.com.br"
+                  }
+                },
+                "full": {
+                  "summary": "Todos os campos",
+                  "description": "Exemplo com todos os campos possíveis",
+                  "value": {
+                    "id": "123456",
+                    "name": "Roberval Juvencio Lazaroti",
+                    "birth_date": "1976-01-23",
+                    "email": "roberval@lazaroti.com.br",
+                    "cpf": "94819089846",
+                    "gender": "M",
+                    "cell_phone": "11912345678",
+                    "phone": "1112345678",
+                    "profession": "Agricultor",
+                    "registration": "2312312",
+                    "address": {
+                      "state": "SP",
+                      "city": 3505708,
+                      "number": "238",
+                      "neighborhood": "Dezoito do Forte",
+                      "complement": "4o andar",
+                      "street": "Avenida Copacabana",
+                      "zip_code": "06472000"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Person successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonCreateResponseSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation Error (field type)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error (logic)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "create"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/person/{id}": {
+      "get": {
+        "operationId": "ReadController_get",
+        "summary": "Pesquisa um objeto PERSON",
+        "description": "* PERSON representa seu cliente (paciente) no em um atendimento.\n",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Person",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonReadResponseSchema"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Person not found"
+          }
+        },
+        "tags": [
+          "read"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "put": {
+        "operationId": "UpdateController_update",
+        "summary": "Altera um objeto PERSON",
+        "description": "\nO que é PERSON?:\n* PERSON representa seu cliente (paciente) no em um atendimento\n* PERSON pode ser independente ou ter um responsável legal, basta colocar o ID do PERSON responsável no campo parent_ID\n\nCampos opcionais que precisam ser informados caso:\n* email: caso o cliente precise receber emails\n* cell_phone: caso o cliente precise receber SMS ou Whatsapp\n    ",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "O id de person",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonUpdateRequestSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonUpdateResponseSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation Error (field type)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error (logic)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "update"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteController_delete",
+        "summary": "Exclui um objeto PERSON",
+        "description": "\n* PERSON representa seu cliente (paciente) no em um atendimento.\n* O ID de Person não pode ser reaproveitado. Sua exclusão é LOGICA, ou seja, o registro permanece por histórico das consultas já efetuadas.\n    ",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "O id de person",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "delete"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ]
+}
