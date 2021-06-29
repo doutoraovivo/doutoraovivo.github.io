@@ -1,22 +1,13 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Person",
-    "description": "Customer (Patient) Data. This is necessary to create appointments.",
-    "version": "1.0",
+    "title": "Doutor ao Vivo - API - Professional",
+    "description": "All about your professionals",
+    "version": "1.0.0",
     "contact": {}
   },
   "tags": [],
-  "servers": [
-    {
-      "url": "https://api.v2.doutoraovivo.com.br",
-      "description": "PRODUCTION server"
-    },
-    {
-      "url": "https://api.v2.hom.doutoraovivo.com.br",
-      "description": "STAGE server"
-    }
-  ],
+  "servers": [],
   "components": {
     "schemas": {
       "AddressSchema": {
@@ -49,20 +40,9 @@
             "example": "Dezoito do Forte"
           },
           "city": {
-            "type": "string",
+            "type": "number",
             "description": "Código do município do IBGE (https://www.ibge.gov.br/explica/codigos-dos-municipios.php)",
-            "example": 3505708,
-            "enum": [
-              "Alta Floresta D'Oeste - Rondônia",
-              "Ariquemes - Rondônia",
-              "Cabixi - Rondônia",
-              "Cacoal - Rondônia",
-              "Cerejeiras - Rondônia",
-              "Colorado do Oeste - Rondônia",
-              "Corumbiara - Rondônia",
-              "Costa Marques - Rondônia",
-              "Espigão D'Oeste - Rondônia"
-            ]
+            "example": 3505708
           },
           "state": {
             "type": "string",
@@ -108,16 +88,12 @@
           "state"
         ]
       },
-      "PersonCreateRequestSchema": {
+      "ProfessionalCreateRequestDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "description": "Unique Identificator"
-          },
-          "parent_id": {
-            "type": "string",
-            "description": "Id of this person legal responsible"
           },
           "name": {
             "type": "string",
@@ -129,14 +105,35 @@
             "example": "94819089846",
             "pattern": "^\\d{3}\\d{3}\\d{3}\\d{2}$"
           },
-          "registration": {
-            "type": "string",
-            "description": "Special Field like registration ID or social service ID"
-          },
           "birth_date": {
             "type": "string",
             "format": "date",
             "description": "Birth Date"
+          },
+          "mail": {
+            "type": "string",
+            "format": "email",
+            "example": "professional@example.dav.med.br"
+          },
+          "crm": {
+            "type": "string",
+            "description": "CRM",
+            "example": "12345-SP"
+          },
+          "license_council": {
+            "type": "string",
+            "description": "Tipo de registro de conselho regional",
+            "example": "CREF"
+          },
+          "license_number": {
+            "type": "string",
+            "description": "Numero do registro de conselho regional",
+            "example": "12345"
+          },
+          "license_region": {
+            "type": "string",
+            "description": "Região do registro de conselho",
+            "example": "SP"
           },
           "gender": {
             "type": "string",
@@ -146,7 +143,7 @@
               "M"
             ]
           },
-          "phone": {
+          "telephone": {
             "type": "string",
             "description": "Phone Number (if applicable)",
             "example": "1112345678",
@@ -157,16 +154,6 @@
             "description": "Phone Number (if applicable)",
             "example": "11912345678",
             "pattern": "\\d{2}\\d{5}\\d{4}"
-          },
-          "profession": {
-            "type": "string",
-            "maxLength": 100,
-            "example": "Accountant"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "person@example.dav.med.br"
           },
           "address": {
             "description": "Endereço",
@@ -181,10 +168,19 @@
         "required": [
           "name",
           "birth_date",
-          "email"
+          "mail"
         ]
       },
-      "PersonCreateResponseSchema": {
+      "ProfessionalCreateResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator"
+          }
+        }
+      },
+      "ProfessionalReadResponseDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -194,59 +190,6 @@
           "name": {
             "type": "string",
             "description": "Name"
-          }
-        },
-        "required": [
-          "name"
-        ]
-      },
-      "i18nMessageConfig": {
-        "type": "object",
-        "properties": {}
-      },
-      "DavHttpExceptionDto": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "number",
-            "description": "HTTP Response Code"
-          },
-          "message": {
-            "type": "string",
-            "description": "Error Message"
-          },
-          "i18n": {
-            "description": "For use with Frontend only",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/i18nMessageConfig"
-              }
-            ]
-          },
-          "detail": {
-            "description": "Individual Messages",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "trace": {
-            "type": "string",
-            "description": "Trace ID - pass it to DaV support"
-          }
-        },
-        "required": [
-          "code",
-          "message",
-          "trace"
-        ]
-      },
-      "PersonUpdateRequestSchema": {
-        "type": "object",
-        "properties": {
-          "parent_id": {
-            "type": "string",
-            "description": "Id of this person legal responsible"
           },
           "cpf": {
             "type": "string",
@@ -254,9 +197,35 @@
             "example": "94819089846",
             "pattern": "^\\d{3}\\d{3}\\d{3}\\d{2}$"
           },
-          "registration": {
+          "birth_date": {
             "type": "string",
-            "description": "Special Field like registration ID or social service ID"
+            "format": "date",
+            "description": "Birth Date"
+          },
+          "mail": {
+            "type": "string",
+            "format": "email",
+            "example": "professional@example.dav.med.br"
+          },
+          "crm": {
+            "type": "string",
+            "description": "CRM",
+            "example": "12345-SP"
+          },
+          "license_council": {
+            "type": "string",
+            "description": "Tipo de registro de conselho regional",
+            "example": "CREF"
+          },
+          "license_number": {
+            "type": "string",
+            "description": "Numero do registro de conselho regional",
+            "example": "12345"
+          },
+          "license_region": {
+            "type": "string",
+            "description": "Região do registro de conselho",
+            "example": "SP"
           },
           "gender": {
             "type": "string",
@@ -266,7 +235,7 @@
               "M"
             ]
           },
-          "phone": {
+          "telephone": {
             "type": "string",
             "description": "Phone Number (if applicable)",
             "example": "1112345678",
@@ -278,11 +247,6 @@
             "example": "11912345678",
             "pattern": "\\d{2}\\d{5}\\d{4}"
           },
-          "profession": {
-            "type": "string",
-            "maxLength": 100,
-            "example": "Accountant"
-          },
           "address": {
             "description": "Endereço",
             "additionalProperties": false,
@@ -291,7 +255,17 @@
                 "$ref": "#/components/schemas/AddressSchema"
               }
             ]
-          },
+          }
+        },
+        "required": [
+          "name",
+          "birth_date",
+          "mail"
+        ]
+      },
+      "ProfessionalUpdateRequestDto": {
+        "type": "object",
+        "properties": {
           "name": {
             "type": "string",
             "description": "Name"
@@ -301,19 +275,54 @@
             "format": "date",
             "description": "Birth Date"
           },
-          "email": {
+          "mail": {
             "type": "string",
             "format": "email",
-            "example": "person@example.dav.med.br"
-          }
-        }
-      },
-      "PersonUpdateResponseSchema": {
-        "type": "object",
-        "properties": {
-          "id": {
+            "example": "professional@example.dav.med.br"
+          },
+          "license_council": {
             "type": "string",
-            "description": "Unique Identificator"
+            "description": "Tipo de registro de conselho regional",
+            "example": "CREF"
+          },
+          "license_number": {
+            "type": "string",
+            "description": "Numero do registro de conselho regional",
+            "example": "12345"
+          },
+          "license_region": {
+            "type": "string",
+            "description": "Região do registro de conselho",
+            "example": "SP"
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender",
+            "enum": [
+              "F",
+              "M"
+            ]
+          },
+          "telephone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "1112345678",
+            "pattern": "\\d{2}\\d{4}\\d{4}"
+          },
+          "cell_phone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "11912345678",
+            "pattern": "\\d{2}\\d{5}\\d{4}"
+          },
+          "address": {
+            "description": "Endereço",
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressSchema"
+              }
+            ]
           }
         }
       }
@@ -327,11 +336,11 @@
     }
   },
   "paths": {
-    "/person": {
+    "/professional": {
       "post": {
         "operationId": "CreateController_create",
-        "summary": "cria um objeto PERSON",
-        "description": "* PERSON representa seu cliente no atendimento.\n* PERSON pode ser independente ou ter um responsável legal, basta colocar o ID do PERSON responsável no campo parent_ID\n* O ID de PERSON pode ser informado, caso você integrador queira usar o mesmo ID que já usa em seus sistema, simplificando a integração\n* Se não informar o ID, você precisa guardar o ID gerado em formato UUID para usar em outras consultas ou na inclusão de um agendamento.",
+        "summary": "cria um objeto PROFESSIONAL",
+        "description": "* PROFESSIONAL representa seu profissional no atendimento.\n* O ID de PROFESSIONAL pode ser informado, caso você integrador queira usar o mesmo ID que já usa em seus sistema, simplificando a integração\n* Se não informar o ID, você precisa guardar o ID gerado em formato UUID para usar em outras consultas ou na inclusão de um agendamento.",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -340,7 +349,7 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "$ref": "#/components/schemas/PersonCreateRequestSchema"
+                "$ref": "#/components/schemas/ProfessionalCreateRequestDto"
               },
               "examples": {
                 "requiredOnly": {
@@ -350,7 +359,11 @@
                     "id": "123456",
                     "name": "Roberval Juvencio Lazaroti",
                     "birth_date": "1976-01-23",
-                    "email": "roberval@lazaroti.com.br"
+                    "mail": "roberval@lazaroti.com.br",
+                    "cpf": "94819089846",
+                    "license_number": "12345",
+                    "license_region": "SP",
+                    "license_council": "CRM"
                   }
                 },
                 "full": {
@@ -360,13 +373,14 @@
                     "id": "123456",
                     "name": "Roberval Juvencio Lazaroti",
                     "birth_date": "1976-01-23",
-                    "email": "roberval@lazaroti.com.br",
+                    "mail": "roberval@lazaroti.com.br",
                     "cpf": "94819089846",
+                    "license_number": "12345",
+                    "license_region": "SP",
+                    "license_council": "CRM",
                     "gender": "M",
                     "cell_phone": "11912345678",
-                    "phone": "1112345678",
-                    "profession": "Agricultor",
-                    "registration": "2312312",
+                    "telephone": "1112345678",
                     "address": {
                       "state": "SP",
                       "city": 3505708,
@@ -384,34 +398,17 @@
         },
         "responses": {
           "201": {
-            "description": "Person successfully created.",
+            "description": "Professional successfully created.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PersonCreateResponseSchema"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation Error (field type)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                  "$ref": "#/components/schemas/ProfessionalCreateResponseDto"
                 }
               }
             }
           },
           "422": {
-            "description": "Validation Error (logic)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DavHttpExceptionDto"
-                }
-              }
-            }
+            "description": "Professional already exists"
           }
         },
         "tags": [
@@ -424,7 +421,7 @@
         ]
       }
     },
-    "/person/{id}": {
+    "/professional/{id}": {
       "get": {
         "operationId": "ReadController_get",
         "parameters": [
@@ -439,10 +436,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Person"
+            "description": "Professional",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfessionalReadResponseDto"
+                }
+              }
+            }
           },
           "204": {
-            "description": "Person not found"
+            "description": "Professional item not Found"
           }
         },
         "tags": [
@@ -456,12 +460,13 @@
       },
       "put": {
         "operationId": "UpdateController_update",
+        "summary": "altera um objeto PROFESSIONAL",
+        "description": "* PROFESSIONAL profissional no sistema",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "O id de person",
             "schema": {
               "type": "string"
             }
@@ -472,31 +477,54 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PersonUpdateRequestSchema"
+                "type": "object",
+                "additionalProperties": false,
+                "$ref": "#/components/schemas/ProfessionalUpdateRequestDto"
+              },
+              "examples": {
+                "full": {
+                  "summary": "Campos disponíveis para edição",
+                  "description": "Exemplo com todos os campos possíveis",
+                  "value": {
+                    "id": "123456",
+                    "name": "Roberval Juvencio Lazaroti",
+                    "birth_date": "1976-01-23",
+                    "mail": "roberval@lazaroti.com.br",
+                    "cpf": "94819089846",
+                    "license_number": "12345",
+                    "license_region": "SP",
+                    "license_council": "CRM",
+                    "gender": "M",
+                    "cell_phone": "11912345678",
+                    "telephone": "1112345678",
+                    "address": {
+                      "state": "SP",
+                      "city": 3505708,
+                      "number": "238",
+                      "neighborhood": "Dezoito do Forte",
+                      "complement": "4o andar",
+                      "street": "Avenida Copacabana",
+                      "zip_code": "06472000"
+                    }
+                  }
+                }
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "",
+          "201": {
+            "description": "Professional successfully updated.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PersonUpdateResponseSchema"
+                  "$ref": "#/components/schemas/ProfessionalCreateResponseDto"
                 }
               }
             }
           },
-          "422": {
-            "description": "Default Error Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DavHttpExceptionDto"
-                }
-              }
-            }
+          "204": {
+            "description": "Professional item not Found"
           }
         },
         "tags": [
@@ -510,12 +538,12 @@
       },
       "delete": {
         "operationId": "DeleteController_delete",
+        "summary": "inativa um objeto PROFESSIONAL",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "O id de person",
             "schema": {
               "type": "string"
             }
@@ -523,7 +551,10 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Professional successfully deleted."
+          },
+          "204": {
+            "description": "Professional item not Found"
           }
         },
         "tags": [
