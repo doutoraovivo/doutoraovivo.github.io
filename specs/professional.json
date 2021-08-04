@@ -24,7 +24,7 @@
                     "id": "123456",
                     "name": "Roberval Juvencio Lazaroti",
                     "birth_date": "1976-01-23",
-                    "mail": "roberval@lazaroti.com.br",
+                    "email": "roberval@lazaroti.com.br",
                     "cpf": "94819089846",
                     "license_number": "12345",
                     "license_region": "SP",
@@ -38,7 +38,7 @@
                     "id": "123456",
                     "name": "Roberval Juvencio Lazaroti",
                     "birth_date": "1976-01-23",
-                    "mail": "roberval@lazaroti.com.br",
+                    "email": "roberval@lazaroti.com.br",
                     "cpf": "94819089846",
                     "license_number": "12345",
                     "license_region": "SP",
@@ -160,7 +160,7 @@
                     "id": "123456",
                     "name": "Roberval Juvencio Lazaroti",
                     "birth_date": "1976-01-23",
-                    "mail": "roberval@lazaroti.com.br",
+                    "email": "roberval@lazaroti.com.br",
                     "cpf": "94819089846",
                     "license_number": "12345",
                     "license_region": "SP",
@@ -359,7 +359,7 @@
             "format": "date",
             "description": "Birth Date"
           },
-          "mail": {
+          "email": {
             "type": "string",
             "format": "email",
             "example": "professional@example.dav.med.br"
@@ -429,7 +429,7 @@
           "name",
           "cpf",
           "birth_date",
-          "mail",
+          "email",
           "license_number"
         ]
       },
@@ -464,7 +464,7 @@
             "format": "date",
             "description": "Birth Date"
           },
-          "mail": {
+          "email": {
             "type": "string",
             "format": "email",
             "example": "professional@example.dav.med.br"
@@ -534,7 +534,7 @@
           "name",
           "cpf",
           "birth_date",
-          "mail",
+          "email",
           "license_number"
         ]
       },
@@ -556,7 +556,7 @@
             "format": "date",
             "description": "Birth Date"
           },
-          "mail": {
+          "email": {
             "type": "string",
             "format": "email",
             "example": "professional@example.dav.med.br"
@@ -621,7 +621,7 @@
           "name",
           "cpf",
           "birth_date",
-          "mail",
+          "email",
           "license_number"
         ]
       }
