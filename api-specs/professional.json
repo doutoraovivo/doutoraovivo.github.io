@@ -1,11 +1,11 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/person": {
+    "/professional": {
       "post": {
         "operationId": "CreateController_create",
-        "summary": "Cria um objeto PERSON",
-        "description": "\nO que é PERSON?:\n* PERSON representa seu cliente (paciente) no em um atendimento\n* PERSON pode ser independente ou ter um responsável legal, basta colocar o ID do PERSON responsável no campo parent_ID\n* O ID de PERSON pode ser informado, caso você integrador queira usar o mesmo ID que já usa em seu sistema, simplificando a integração\n* Se não informar o ID, será gerado um em formato UUID, e deverá ser utilizado para um novo agendamento.\n\nCampos opcionais que precisam ser informados (e ser únicos na base) caso:\n* email: caso o cliente precise receber emails\n* cell_phone: caso o cliente precise receber SMS ou Whatsapp\n    ",
+        "summary": "cria um objeto PROFESSIONAL",
+        "description": "* PROFESSIONAL representa seu profissional no atendimento.\n* O ID de PROFESSIONAL pode ser informado, caso você integrador queira usar o mesmo ID que já usa em seus sistema, simplificando a integração\n* Se não informar o ID, você precisa guardar o ID gerado em formato UUID para usar em outras consultas ou na inclusão de um agendamento.",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -14,7 +14,7 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "$ref": "#/components/schemas/PersonCreateRequestSchema"
+                "$ref": "#/components/schemas/ProfessionalCreateRequestDto"
               },
               "examples": {
                 "requiredOnly": {
@@ -24,7 +24,11 @@
                     "id": "123456",
                     "name": "Roberval Juvencio Lazaroti",
                     "birth_date": "1976-01-23",
-                    "email": "roberval@lazaroti.com.br"
+                    "mail": "roberval@lazaroti.com.br",
+                    "cpf": "94819089846",
+                    "license_number": "12345",
+                    "license_region": "SP",
+                    "license_council": "CRM"
                   }
                 },
                 "full": {
@@ -34,13 +38,18 @@
                     "id": "123456",
                     "name": "Roberval Juvencio Lazaroti",
                     "birth_date": "1976-01-23",
-                    "email": "roberval@lazaroti.com.br",
+                    "mail": "roberval@lazaroti.com.br",
                     "cpf": "94819089846",
+                    "license_number": "12345",
+                    "license_region": "SP",
+                    "license_council": "CRM",
                     "gender": "M",
                     "cell_phone": "11912345678",
-                    "phone": "1112345678",
-                    "profession": "Agricultor",
-                    "registration": "2312312",
+                    "telephone": "1112345678",
+                    "medical_specialty": [
+                      "Cardiologia",
+                      "Oncologia"
+                    ],
                     "address": {
                       "state": "SP",
                       "city": 3505708,
@@ -58,34 +67,17 @@
         },
         "responses": {
           "201": {
-            "description": "Person successfully created.",
+            "description": "Professional successfully created.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PersonCreateResponseSchema"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation Error (field type)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                  "$ref": "#/components/schemas/ProfessionalCreateResponseDto"
                 }
               }
             }
           },
           "422": {
-            "description": "Validation Error (logic)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DavHttpExceptionDto"
-                }
-              }
-            }
+            "description": "Professional already exists"
           }
         },
         "tags": [
@@ -98,11 +90,11 @@
         ]
       }
     },
-    "/person/{id}": {
+    "/professional/{id}": {
       "get": {
         "operationId": "ReadController_get",
-        "summary": "Pesquisa um objeto PERSON",
-        "description": "* PERSON representa seu cliente (paciente) no em um atendimento.\n",
+        "summary": "Pesquisa um objeto PROFESSIONAL",
+        "description": "* PROFESSIONAL representa seu profissional (doutor) no em um atendimento.\n",
         "parameters": [
           {
             "name": "id",
@@ -115,17 +107,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Person",
+            "description": "Professional",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PersonReadResponseSchema"
+                  "$ref": "#/components/schemas/ProfessionalReadResponseDto"
                 }
               }
             }
           },
           "204": {
-            "description": "Person not found"
+            "description": "Professional item not Found"
           }
         },
         "tags": [
@@ -139,14 +131,13 @@
       },
       "put": {
         "operationId": "UpdateController_update",
-        "summary": "Substitui os dados do PERSON pelo que for enviado no corpo da requisição",
-        "description": "\nO que é PERSON?:\n* PERSON representa seu cliente (paciente) no em um atendimento\n* PERSON pode ser independente ou ter um responsável legal, basta colocar o ID do PERSON responsável no campo parent_ID\n\nCampos opcionais que precisam ser informados caso:\n* email: caso o cliente precise receber emails\n* cell_phone: caso o cliente precise receber SMS ou Whatsapp\n    ",
+        "summary": "Substitui os dados do PROFESSIONAL pelo que for enviado no corpo da requisição",
+        "description": "\n      * PROFESSIONAL representa os dados de um profissional (doutor) cadastrado no sistema\n      * Se alguma propriedade não for enviada no corpo da requisição será deletada\n    ",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "O id de person",
             "schema": {
               "type": "string"
             }
@@ -157,41 +148,54 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PersonUpdateRequestSchema"
+                "type": "object",
+                "additionalProperties": false,
+                "$ref": "#/components/schemas/ProfessionalUpdateRequestDto"
+              },
+              "examples": {
+                "full": {
+                  "summary": "Campos disponíveis para edição",
+                  "description": "Exemplo com todos os campos possíveis",
+                  "value": {
+                    "id": "123456",
+                    "name": "Roberval Juvencio Lazaroti",
+                    "birth_date": "1976-01-23",
+                    "mail": "roberval@lazaroti.com.br",
+                    "cpf": "94819089846",
+                    "license_number": "12345",
+                    "license_region": "SP",
+                    "license_council": "CRM",
+                    "gender": "M",
+                    "cell_phone": "11912345678",
+                    "telephone": "1112345678",
+                    "address": {
+                      "state": "SP",
+                      "city": 3505708,
+                      "number": "238",
+                      "neighborhood": "Dezoito do Forte",
+                      "complement": "4o andar",
+                      "street": "Avenida Copacabana",
+                      "zip_code": "06472000"
+                    }
+                  }
+                }
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "",
+          "201": {
+            "description": "Professional successfully updated.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PersonUpdateResponseSchema"
+                  "$ref": "#/components/schemas/ProfessionalCreateResponseDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Validation Error (field type)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DavHttpExceptionDto"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error (logic)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DavHttpExceptionDto"
-                }
-              }
-            }
+          "204": {
+            "description": "Professional item not Found"
           }
         },
         "tags": [
@@ -205,14 +209,13 @@
       },
       "delete": {
         "operationId": "DeleteController_delete",
-        "summary": "Exclui um objeto PERSON",
-        "description": "\n* PERSON representa seu cliente (paciente) no em um atendimento.\n* O ID de Person não pode ser reaproveitado. Sua exclusão é LOGICA, ou seja, o registro permanece por histórico das consultas já efetuadas.\n    ",
+        "summary": "Exclui um objeto PROFESSIONAL",
+        "description": "\n* PROFESSIONAL representa seu profissional (doutor) em um atendimento.\n* O ID de PROFESSIONAL não pode ser reaproveitado. Sua exclusão é LOGICA, ou seja, o registro permanece por histórico das consultas já efetuadas.\n    ",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "O id de person",
             "schema": {
               "type": "string"
             }
@@ -220,7 +223,10 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Professional successfully deleted."
+          },
+          "204": {
+            "description": "Professional item not Found"
           }
         },
         "tags": [
@@ -235,8 +241,8 @@
     }
   },
   "info": {
-    "title": "Person",
-    "description": "Criação e manutenção de clientes (pacientes/atendidos/assistidos)",
+    "title": "Professional",
+    "description": "Criação e manutenção de Profissionais (médicos/colaboradores/especialistas)",
     "version": "1.0.0",
     "contact": {}
   },
@@ -331,16 +337,12 @@
           "state"
         ]
       },
-      "PersonCreateRequestSchema": {
+      "ProfessionalCreateRequestDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "description": "Unique Identificator"
-          },
-          "parent_id": {
-            "type": "string",
-            "description": "Id of this person legal responsible"
           },
           "name": {
             "type": "string",
@@ -352,140 +354,46 @@
             "example": "94819089846",
             "pattern": "^\\d{3}\\d{3}\\d{3}\\d{2}$"
           },
-          "registration": {
-            "type": "string",
-            "description": "Special Field like registration ID or social service ID"
-          },
           "birth_date": {
             "type": "string",
             "format": "date",
             "description": "Birth Date"
           },
-          "gender": {
-            "type": "string",
-            "description": "Gender",
-            "enum": [
-              "F",
-              "M"
-            ]
-          },
-          "phone": {
-            "type": "string",
-            "description": "Phone Number (if applicable)",
-            "example": "1112345678",
-            "pattern": "^\\d{2}\\d{4}\\d{4}$"
-          },
-          "cell_phone": {
-            "type": "string",
-            "description": "Phone Number (if applicable)",
-            "example": "11912345678",
-            "pattern": "^\\d{2}\\d{5}\\d{4}$"
-          },
-          "profession": {
-            "type": "string",
-            "maxLength": 100,
-            "example": "Accountant"
-          },
-          "email": {
+          "mail": {
             "type": "string",
             "format": "email",
-            "example": "person@example.dav.med.br"
+            "example": "professional@example.dav.med.br"
           },
-          "address": {
-            "description": "Endereço",
-            "additionalProperties": false,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AddressSchema"
-              }
-            ]
-          }
-        },
-        "required": [
-          "name",
-          "birth_date",
-          "email"
-        ]
-      },
-      "PersonCreateResponseSchema": {
-        "type": "object",
-        "properties": {
-          "id": {
+          "crm": {
             "type": "string",
-            "description": "Unique Identificator"
-          }
-        }
-      },
-      "i18nMessageConfig": {
-        "type": "object",
-        "properties": {}
-      },
-      "DavHttpExceptionDto": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "number",
-            "description": "HTTP Response Code"
+            "description": "CRM",
+            "example": "12345-SP"
           },
-          "message": {
-            "type": "string",
-            "description": "Error Message"
-          },
-          "i18n": {
-            "description": "For use with Frontend only",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/i18nMessageConfig"
-              }
-            ]
-          },
-          "detail": {
-            "description": "Individual Messages",
+          "medical_specialty": {
+            "description": "Medical specialties",
+            "example": [
+              "Cardiologista"
+            ],
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "trace": {
+          "license_council": {
             "type": "string",
-            "description": "Trace ID - pass it to DaV support"
-          }
-        },
-        "required": [
-          "code",
-          "message",
-          "trace"
-        ]
-      },
-      "PersonReadResponseSchema": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique Identificator"
+            "description": "Tipo de registro de conselho regional",
+            "example": "CREF"
           },
-          "parent_id": {
+          "license_number": {
             "type": "string",
-            "description": "Id of this person legal responsible"
+            "description": "Numero do registro de conselho regional",
+            "example": "12345",
+            "maxLength": 20
           },
-          "name": {
+          "license_region": {
             "type": "string",
-            "description": "Name"
-          },
-          "cpf": {
-            "type": "string",
-            "description": "CPF",
-            "example": "94819089846",
-            "pattern": "^\\d{3}\\d{3}\\d{3}\\d{2}$"
-          },
-          "registration": {
-            "type": "string",
-            "description": "Special Field like registration ID or social service ID"
-          },
-          "birth_date": {
-            "type": "string",
-            "format": "date",
-            "description": "Birth Date"
+            "description": "Região do registro de conselho",
+            "example": "SP"
           },
           "gender": {
             "type": "string",
@@ -495,7 +403,7 @@
               "M"
             ]
           },
-          "phone": {
+          "telephone": {
             "type": "string",
             "description": "Phone Number (if applicable)",
             "example": "1112345678",
@@ -506,16 +414,6 @@
             "description": "Phone Number (if applicable)",
             "example": "11912345678",
             "pattern": "^\\d{2}\\d{5}\\d{4}$"
-          },
-          "profession": {
-            "type": "string",
-            "maxLength": 100,
-            "example": "Accountant"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "person@example.dav.med.br"
           },
           "address": {
             "description": "Endereço",
@@ -529,83 +427,13 @@
         },
         "required": [
           "name",
+          "cpf",
           "birth_date",
-          "email"
+          "mail",
+          "license_number"
         ]
       },
-      "PersonUpdateRequestSchema": {
-        "type": "object",
-        "properties": {
-          "parent_id": {
-            "type": "string",
-            "description": "Id of this person legal responsible"
-          },
-          "name": {
-            "type": "string",
-            "description": "Name"
-          },
-          "cpf": {
-            "type": "string",
-            "description": "CPF",
-            "example": "94819089846",
-            "pattern": "^\\d{3}\\d{3}\\d{3}\\d{2}$"
-          },
-          "registration": {
-            "type": "string",
-            "description": "Special Field like registration ID or social service ID"
-          },
-          "birth_date": {
-            "type": "string",
-            "format": "date",
-            "description": "Birth Date"
-          },
-          "gender": {
-            "type": "string",
-            "description": "Gender",
-            "enum": [
-              "F",
-              "M"
-            ]
-          },
-          "phone": {
-            "type": "string",
-            "description": "Phone Number (if applicable)",
-            "example": "1112345678",
-            "pattern": "^\\d{2}\\d{4}\\d{4}$"
-          },
-          "cell_phone": {
-            "type": "string",
-            "description": "Phone Number (if applicable)",
-            "example": "11912345678",
-            "pattern": "^\\d{2}\\d{5}\\d{4}$"
-          },
-          "profession": {
-            "type": "string",
-            "maxLength": 100,
-            "example": "Accountant"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "person@example.dav.med.br"
-          },
-          "address": {
-            "description": "Endereço",
-            "additionalProperties": false,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AddressSchema"
-              }
-            ]
-          }
-        },
-        "required": [
-          "name",
-          "birth_date",
-          "email"
-        ]
-      },
-      "PersonUpdateResponseSchema": {
+      "ProfessionalCreateResponseDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -613,6 +441,189 @@
             "description": "Unique Identificator"
           }
         }
+      },
+      "ProfessionalReadResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "CPF",
+            "example": "94819089846",
+            "pattern": "^\\d{3}\\d{3}\\d{3}\\d{2}$"
+          },
+          "birth_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Birth Date"
+          },
+          "mail": {
+            "type": "string",
+            "format": "email",
+            "example": "professional@example.dav.med.br"
+          },
+          "crm": {
+            "type": "string",
+            "description": "CRM",
+            "example": "12345-SP"
+          },
+          "medical_specialty": {
+            "description": "Medical specialties",
+            "example": [
+              "Cardiologista"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "license_council": {
+            "type": "string",
+            "description": "Tipo de registro de conselho regional",
+            "example": "CREF"
+          },
+          "license_number": {
+            "type": "string",
+            "description": "Numero do registro de conselho regional",
+            "example": "12345",
+            "maxLength": 20
+          },
+          "license_region": {
+            "type": "string",
+            "description": "Região do registro de conselho",
+            "example": "SP"
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender",
+            "enum": [
+              "F",
+              "M"
+            ]
+          },
+          "telephone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "1112345678",
+            "pattern": "^\\d{2}\\d{4}\\d{4}$"
+          },
+          "cell_phone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "11912345678",
+            "pattern": "^\\d{2}\\d{5}\\d{4}$"
+          },
+          "address": {
+            "description": "Endereço",
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressSchema"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "cpf",
+          "birth_date",
+          "mail",
+          "license_number"
+        ]
+      },
+      "ProfessionalUpdateRequestDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "CPF",
+            "example": "94819089846",
+            "pattern": "^\\d{3}\\d{3}\\d{3}\\d{2}$"
+          },
+          "birth_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Birth Date"
+          },
+          "mail": {
+            "type": "string",
+            "format": "email",
+            "example": "professional@example.dav.med.br"
+          },
+          "medical_specialty": {
+            "description": "Medical specialties",
+            "example": [
+              "Cardiologista"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "license_council": {
+            "type": "string",
+            "description": "Tipo de registro de conselho regional",
+            "example": "CREF"
+          },
+          "license_number": {
+            "type": "string",
+            "description": "Numero do registro de conselho regional",
+            "example": "12345",
+            "maxLength": 20
+          },
+          "license_region": {
+            "type": "string",
+            "description": "Região do registro de conselho",
+            "example": "SP"
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender",
+            "enum": [
+              "F",
+              "M"
+            ]
+          },
+          "telephone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "1112345678",
+            "pattern": "^\\d{2}\\d{4}\\d{4}$"
+          },
+          "cell_phone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "11912345678",
+            "pattern": "^\\d{2}\\d{5}\\d{4}$"
+          },
+          "address": {
+            "description": "Endereço",
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressSchema"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "cpf",
+          "birth_date",
+          "mail",
+          "license_number"
+        ]
       }
     },
     "securitySchemes": {

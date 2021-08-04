@@ -1,0 +1,480 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/voucher": {
+      "post": {
+        "operationId": "CreateController_create",
+        "summary": "cria um objeto VOUCHER",
+        "description": "* VOUCHER representa um codigo de desconto.\n* O VALOR (de 0 a 100) pode ser tanto em moeda quando em porcentagem \n* O TYPE_DISCOUNT (PERCENTAGE ou VALUE) incida se o valor é em moeda ou porcentagem \n",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "$ref": "#/components/schemas/VoucherCreateRequestDto"
+              },
+              "examples": {
+                "requiredOnly": {
+                  "description": "Somente campos obrigatórios. Note que o campo ID segue a regra descrita acima.",
+                  "summary": "Somente campos obrigatórios",
+                  "value": {
+                    "id": "VOUCHER100",
+                    "description": "Voucher para consulta",
+                    "expire": "2021-05-25T21:08:56.099Z",
+                    "limit_use": 10,
+                    "discount": 10,
+                    "type_discount": "PERCENTAGE"
+                  }
+                },
+                "full": {
+                  "summary": "Todos os campos",
+                  "description": "Exemplo com todos os campos possíveis",
+                  "value": {
+                    "id": "VOUCHER100",
+                    "description": "Voucher para consulta",
+                    "expire": "2021-05-25T21:08:56.099Z",
+                    "limit_use": 10,
+                    "discount": 10,
+                    "type_discount": "PERCENTAGE",
+                    "person": "9588ccf4-877c-4f29-8a0e-af1536588ac8",
+                    "professional": "5e926fd0-339a-420d-8dd3-e65fa62d2907"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Voucher successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoucherCreateResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unable to create"
+          },
+          "409": {
+            "description": "The given voucher id was already taken"
+          }
+        },
+        "tags": [
+          "create"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "ReadController_getAll",
+        "summary": "obtém lista com objetos VOUCHER",
+        "parameters": [
+          {
+            "name": "x-exclusive-start-key",
+            "required": false,
+            "in": "header",
+            "description": "key da ultima paginação",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "is active",
+            "example": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "description",
+            "required": false,
+            "in": "query",
+            "description": "Description",
+            "example": "voucher de teste",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "discount_to",
+            "required": false,
+            "in": "query",
+            "description": "Discount to",
+            "example": 100,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "discount_from",
+            "required": false,
+            "in": "query",
+            "description": "Discount from",
+            "example": 10,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "discount",
+            "required": false,
+            "in": "query",
+            "description": "Discount",
+            "example": 50,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "type_discount",
+            "required": false,
+            "in": "query",
+            "description": "Type discount",
+            "example": "PERCENTAGE",
+            "schema": {
+              "enum": [
+                "PERCENTAGE",
+                "VALUE"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "expire_to",
+            "required": false,
+            "in": "query",
+            "description": "Expire to",
+            "example": "2021-05-27T21:08:56.099Z",
+            "schema": {
+              "type": "date-time"
+            }
+          },
+          {
+            "name": "expire_from",
+            "required": false,
+            "in": "query",
+            "description": "Expire from",
+            "example": "2021-05-25T21:08:56.099Z",
+            "schema": {
+              "type": "date-time"
+            }
+          },
+          {
+            "name": "expire",
+            "required": false,
+            "in": "query",
+            "description": "Expire date",
+            "example": "2021-05-26T21:08:56.099Z",
+            "schema": {
+              "type": "date-time"
+            }
+          },
+          {
+            "name": "professional",
+            "required": false,
+            "in": "query",
+            "description": "Professional",
+            "example": "9588ccf4-877c-4f29-8a0e-af1536588ac9",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "person",
+            "required": false,
+            "in": "query",
+            "description": "Person",
+            "example": "9588ccf4-877c-4f29-8a0e-af1536588ac8",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Voucher List",
+            "headers": {
+              "x-exclusive-start-key": {
+                "description": "key da ultima paginação"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VoucherReadResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No voucher was found"
+          }
+        },
+        "tags": [
+          "read"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/voucher/{id}": {
+      "get": {
+        "operationId": "ReadController_get",
+        "summary": "obtém um objeto VOUCHER",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Voucher",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoucherReadResponseDto"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Voucher not found"
+          }
+        },
+        "tags": [
+          "read"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteController_delete",
+        "summary": "inativa um objeto VOUCHER",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Voucher successfully deleted."
+          },
+          "204": {
+            "description": "Voucher not found"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Voucher",
+    "description": "Criação e manutenção de Vouchers",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "https://api.v2.doutoraovivo.com.br",
+      "description": "ambiente de PRODUÇÃO"
+    },
+    {
+      "url": "https://api.v2.hom.doutoraovivo.com.br",
+      "description": "ambiente de HOMOLOGAÇÃO"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "VoucherCreateRequestDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator"
+          },
+          "description": {
+            "type": "string",
+            "description": "Voucher description"
+          },
+          "expire": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration date"
+          },
+          "limit_use": {
+            "type": "number",
+            "description": "Number of times it can be used",
+            "example": 10
+          },
+          "discount": {
+            "type": "number",
+            "description": "Value",
+            "example": 10
+          },
+          "type_discount": {
+            "type": "string",
+            "description": "Discount type (percentage or currency value)",
+            "enum": [
+              "PERCENTAGE",
+              "VALUE"
+            ]
+          },
+          "person": {
+            "type": "string",
+            "description": "Id of specific patient to use voucher"
+          },
+          "professional": {
+            "type": "string",
+            "description": "Id of specific professional to use voucher"
+          }
+        },
+        "required": [
+          "description",
+          "expire"
+        ]
+      },
+      "VoucherCreateResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator"
+          }
+        }
+      },
+      "TrackSchema": {
+        "type": "object",
+        "properties": {
+          "appointment_id": {
+            "type": "string",
+            "description": "Id of specific appointment where voucher was used"
+          },
+          "protocol": {
+            "type": "string",
+            "description": "Protocol of specific appointment where voucher was used"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Use date"
+          },
+          "person": {
+            "type": "string",
+            "description": "Id of person that have used voucher"
+          }
+        },
+        "required": [
+          "date"
+        ]
+      },
+      "VoucherReadResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator"
+          },
+          "description": {
+            "type": "string",
+            "description": "Voucher description"
+          },
+          "expire": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration date"
+          },
+          "limit_use": {
+            "type": "number",
+            "description": "Number of times it can be used",
+            "example": 10
+          },
+          "discount": {
+            "type": "number",
+            "description": "Value",
+            "example": 10
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Active",
+            "example": true
+          },
+          "type_discount": {
+            "type": "string",
+            "description": "Discount type (percentage or currency value)",
+            "enum": [
+              "PERCENTAGE",
+              "VALUE"
+            ]
+          },
+          "person": {
+            "type": "string",
+            "description": "Id of specific patient to use voucher"
+          },
+          "professional": {
+            "type": "string",
+            "description": "Id of specific professional to use voucher"
+          },
+          "track": {
+            "description": "Registers of voucher uses",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrackSchema"
+            }
+          }
+        },
+        "required": [
+          "description",
+          "expire"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ]
+}

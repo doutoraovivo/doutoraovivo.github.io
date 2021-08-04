@@ -1,0 +1,875 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/appointment": {
+      "post": {
+        "operationId": "CreateController_create",
+        "summary": "Cria um objeto APPOINTMENT",
+        "description": "\n      Sobre o APPOINTMENT:\n      * APPOINTMENT representa um agendamento de telemedicina no sistema\n      * A data inicial START_DATE_TIME não pode estar no passado\n        e também não pode ser maior do que a data final END_DATE_TIME\n      * O appointment criado é gerado com o status AGE (Agendado)\n      * É preciso ter no mínimo 2 e no máximo 4 participantes\n    ",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "$ref": "#/components/schemas/AppointmentCreateRequestSchema"
+              },
+              "examples": {
+                "requiredOnly": {
+                  "description": "Somente campos obrigatórios. Note que o campo ID segue a regra descrita acima.",
+                  "summary": "Somente campos obrigatórios",
+                  "value": {
+                    "title": "Retorno consulta cardiolista",
+                    "start_date_time": "2021-07-16T20:35:00.000Z",
+                    "end_date_time": "2021-07-16T20:45:00.000Z",
+                    "participants": [
+                      {
+                        "id": "65dcdd85-7740-4ec8-ad07-8c9053f040c4",
+                        "role": "MMD"
+                      },
+                      {
+                        "id": "fa2e0de9-ef36-4f0a-935a-a52c3c37ee1e",
+                        "role": "PAT"
+                      }
+                    ]
+                  }
+                },
+                "full": {
+                  "summary": "Todos os campos",
+                  "description": "Exemplo com todos os campos possíveis",
+                  "value": {
+                    "title": "Retorno consulta cardiolista",
+                    "description": "Consulta para avaliar situação do paciente",
+                    "start_date_time": "2021-07-16T20:35:00.000Z",
+                    "end_date_time": "2021-07-16T20:45:00.000Z",
+                    "participants": [
+                      {
+                        "id": "65dcdd85-7740-4ec8-ad07-8c9053f040c4",
+                        "role": "MMD"
+                      },
+                      {
+                        "id": "fa2e0de9-ef36-4f0a-935a-a52c3c37ee1e",
+                        "role": "PAT"
+                      }
+                    ],
+                    "notes": "Paciente estável",
+                    "reason": "Retorno",
+                    "orientation": "Não praticar exercícios físicos",
+                    "appointment_specialty": "Cardiologia"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Appointment successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppointmentCreateResponseSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation Error (field type)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error (logic)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "create"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/appointment/{id}": {
+      "get": {
+        "operationId": "ReadController_get",
+        "summary": "Pesquisa um objeto APPOINTMENT",
+        "description": "Dados de atendimento de telemedicina no sistema",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Appointment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppointmentReadResponseSchema"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Appointment not found"
+          }
+        },
+        "tags": [
+          "read"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "put": {
+        "operationId": "UpdateController_update",
+        "summary": "Substitui os dados de APPOINTMENT pelo que for enviado no corpo da requisição",
+        "description": "\n    Sobre o APPOINTMENT:\n    * APPOINTMENT representa um agendamento de telemedicina no sistema\n    * A data inicial START_DATE_TIME não pode estar no passado\n      e também não pode ser maior do que a data final END_DATE_TIME\n    * O appointment criado é gerado com o status AGE (Agendado)\n    * É preciso ter no mínimo 2 e no máximo 4 participantes\n    * Apenas appointments com status AGE podem ser editados\n    * Se alguma propriedade não for enviada no corpo da requisição será deletada",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "O id do appointment",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentUpdateRequestSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppointmentUpdateResponseSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation Error (field type)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error (logic)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "update"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteController_delete",
+        "summary": "Exclui um objeto APPOINTMENT",
+        "description": "\n    * A exclusão é LOGICA, ou seja, o registro permanece para consulta no sistema\n      sendo apenas inativado.\n    * Apenas appointments com status AGE podem ser deletados\n    ",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "O id do appointment",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Appointment successfully deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppointmentMinimalResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "delete"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Appointment",
+    "description": "Criação e manutenção de agendamentos (consultas/atendimentos/sessão)\n      ",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "https://api.v2.doutoraovivo.com.br",
+      "description": "ambiente de PRODUÇÃO"
+    },
+    {
+      "url": "https://api.v2.hom.doutoraovivo.com.br",
+      "description": "ambiente de HOMOLOGAÇÃO"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "ParticipantRequestSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Participant ID"
+          },
+          "role": {
+            "type": "string",
+            "description": "Types:* MMD - Main Professional* SMD - Specialist Professional* GMD - Invited Professional* PAT - Patient* PAC - Patient Escort",
+            "enum": [
+              "PAC",
+              "PAT",
+              "MMD",
+              "GMD",
+              "SMD"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "role"
+        ]
+      },
+      "AppointmentCreateRequestSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Appointment title"
+          },
+          "description": {
+            "type": "string",
+            "description": "Appointment description"
+          },
+          "start_date_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Appointment start date time"
+          },
+          "end_date_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Appointment end date time"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notes regarding the appointment"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Appointment reason"
+          },
+          "orientation": {
+            "type": "string",
+            "description": "Orientations to patient"
+          },
+          "appointment_specialty": {
+            "type": "string",
+            "description": "Appointment specialty"
+          },
+          "participants": {
+            "description": "Participants",
+            "maxItems": 4,
+            "minItems": 2,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParticipantRequestSchema"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "start_date_time",
+          "end_date_time",
+          "participants"
+        ]
+      },
+      "ParticipantResponseSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Participant ID"
+          },
+          "url": {
+            "type": "string",
+            "description": "Attendance URL"
+          }
+        },
+        "required": [
+          "id",
+          "url"
+        ]
+      },
+      "AppointmentCreateResponseSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Appointment id"
+          },
+          "participants": {
+            "description": "Participants response",
+            "maxItems": 4,
+            "minItems": 2,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParticipantResponseSchema"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "participants"
+        ]
+      },
+      "i18nMessageConfig": {
+        "type": "object",
+        "properties": {}
+      },
+      "DavHttpExceptionDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "description": "HTTP Response Code"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error Message"
+          },
+          "i18n": {
+            "description": "For use with Frontend only",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/i18nMessageConfig"
+              }
+            ]
+          },
+          "detail": {
+            "description": "Individual Messages",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "trace": {
+            "type": "string",
+            "description": "Trace ID - pass it to DaV support"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "trace"
+        ]
+      },
+      "ParticipantSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Participant ID"
+          },
+          "role": {
+            "type": "string",
+            "description": "Types:* MMD - Main Professional* SMD - Specialist Professional* GMD - Invited Professional* PAT - Patient* PAC - Patient Escort",
+            "enum": [
+              "PAC",
+              "PAT",
+              "MMD",
+              "GMD",
+              "SMD"
+            ]
+          },
+          "time_in_appointment": {
+            "type": "number",
+            "description": "Participant time in appointment"
+          }
+        },
+        "required": [
+          "id",
+          "role"
+        ]
+      },
+      "FileSchema": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date that file was uploaded"
+          },
+          "encoded": {
+            "type": "string",
+            "description": "File encoded in base64"
+          },
+          "file_path": {
+            "type": "string",
+            "description": "The url path of file"
+          },
+          "nameOriginal": {
+            "type": "string",
+            "description": "Original name of file"
+          },
+          "participant": {
+            "type": "string",
+            "description": "Id of participant responsible for the file"
+          }
+        },
+        "required": [
+          "date",
+          "encoded",
+          "file_path",
+          "nameOriginal",
+          "participant"
+        ]
+      },
+      "MessageSchema": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date that message was sent"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message content"
+          },
+          "participant": {
+            "type": "string",
+            "description": "Id of participant responsible for the file"
+          }
+        },
+        "required": [
+          "date",
+          "message",
+          "participant"
+        ]
+      },
+      "RecordSchema": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date when the video was recorded"
+          },
+          "duration": {
+            "type": "number",
+            "description": "Duration of the video in seconds"
+          },
+          "size": {
+            "type": "number",
+            "description": "Video size"
+          },
+          "url": {
+            "type": "string",
+            "description": "Video url path"
+          }
+        },
+        "required": [
+          "date",
+          "duration",
+          "size",
+          "url"
+        ]
+      },
+      "ConnectionSchema": {
+        "type": "object",
+        "properties": {
+          "dateStart": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date start of connection"
+          },
+          "dateEnd": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date end of connection"
+          },
+          "participant": {
+            "type": "string",
+            "description": "Id of participant connected to appointment"
+          }
+        },
+        "required": [
+          "dateStart",
+          "dateEnd",
+          "participant"
+        ]
+      },
+      "ResumeSessionSchema": {
+        "type": "object",
+        "properties": {
+          "total_appointment_time": {
+            "type": "number",
+            "description": "Total appointment duration in seconds"
+          }
+        },
+        "required": [
+          "total_appointment_time"
+        ]
+      },
+      "Cid10Schema": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Cid10 category"
+          },
+          "code": {
+            "type": "string",
+            "description": "Cid10 code"
+          },
+          "subcategory": {
+            "type": "string",
+            "description": "Cid10 subcategory"
+          },
+          "value": {
+            "type": "string",
+            "description": "Cid10 value"
+          }
+        },
+        "required": [
+          "category",
+          "code",
+          "subcategory",
+          "value"
+        ]
+      },
+      "UpshotSchema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Upshot code"
+          },
+          "value": {
+            "type": "string",
+            "description": "Upshot value"
+          }
+        },
+        "required": [
+          "code",
+          "value"
+        ]
+      },
+      "PrescriptionDataSchema": {
+        "type": "object",
+        "properties": {
+          "medicines": {
+            "description": "Medicines prescripted to patient",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "comments": {
+            "type": "string",
+            "description": "Comments about prescription"
+          }
+        }
+      },
+      "AppointmentReadResponseSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Appointment id"
+          },
+          "title": {
+            "type": "string",
+            "description": "Appointment title"
+          },
+          "status_appointment": {
+            "type": "string",
+            "description": "Appointment statusTipos:* `AGE` - Agendada* `INI` - Inicializada* `REA` - Realizada* `REM` - Realizada Manualmente* `CAN` - Cancelada* `CAS` - Cancelada pelo sistema - O sistema detectou que a consulta não foi inicializada e cancelou automaticamente* `NRE` - Não realizada - Um ou mais participantes não compareceram* `SUM` - Sumarizando - Calculando tempos dos participantes e tempo total de uma consulta* Após consulta Inicializada ou Realizada não será permitido alterar dados do agendamento",
+            "enum": [
+              "AGE",
+              "CAN",
+              "CAS",
+              "INI",
+              "NRE",
+              "REA",
+              "REM",
+              "SUM"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "Appointment description"
+          },
+          "start_date_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Appointment start date time"
+          },
+          "end_date_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Appointment end date time"
+          },
+          "participants": {
+            "description": "Participants",
+            "maxItems": 4,
+            "minItems": 2,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParticipantSchema"
+            }
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notes regarding the appointment"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Appointment reason"
+          },
+          "orientation": {
+            "type": "string",
+            "description": "Orientations to patient"
+          },
+          "appointment_specialty": {
+            "type": "string",
+            "description": "Appointment specialty"
+          },
+          "files": {
+            "description": "Files regarding appointment",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FileSchema"
+            }
+          },
+          "messages": {
+            "description": "Messages sent/received on appointment",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageSchema"
+            }
+          },
+          "recordings": {
+            "description": "Videos recorded during appointment",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecordSchema"
+            }
+          },
+          "connections": {
+            "description": "Participants connections info",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectionSchema"
+            }
+          },
+          "resume_session": {
+            "description": "Resumo da sessão",
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResumeSessionSchema"
+              }
+            ]
+          },
+          "cid10": {
+            "description": "Cid10",
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Cid10Schema"
+              }
+            ]
+          },
+          "upshot": {
+            "description": "Upshot",
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UpshotSchema"
+              }
+            ]
+          },
+          "prescription_data": {
+            "description": "Prescription data",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrescriptionDataSchema"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "status_appointment",
+          "start_date_time",
+          "end_date_time",
+          "participants"
+        ]
+      },
+      "AppointmentUpdateRequestSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Appointment title"
+          },
+          "description": {
+            "type": "string",
+            "description": "Appointment description"
+          },
+          "start_date_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Appointment start date time"
+          },
+          "end_date_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Appointment end date time"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notes regarding the appointment"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Appointment reason"
+          },
+          "orientation": {
+            "type": "string",
+            "description": "Orientations to patient"
+          },
+          "appointment_specialty": {
+            "type": "string",
+            "description": "Appointment specialty"
+          },
+          "participants": {
+            "description": "Participants",
+            "maxItems": 4,
+            "minItems": 2,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParticipantRequestSchema"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "start_date_time",
+          "end_date_time",
+          "participants"
+        ]
+      },
+      "AppointmentUpdateResponseSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Appointment id"
+          },
+          "participants": {
+            "description": "Participants response",
+            "maxItems": 4,
+            "minItems": 2,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParticipantResponseSchema"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "participants"
+        ]
+      },
+      "AppointmentMinimalResponseSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Appointment id"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ]
+}
