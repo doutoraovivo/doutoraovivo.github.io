@@ -17,7 +17,7 @@
     "build-publisher": "webpack --config webpack.publisher.js",
     "build-runtime": "webpack --config webpack.runtime.js",
     "build-host": "webpack --config webpack.host.js",
-    "publish": "webpack --config webpack.publisher.js && node dist/publisher/index.js",
+    "publish": "webpack --config webpack.publisher.js && node dist/publisher/index.js && echo -e 'developer.doutoraovivo.com.br' > dist/website/CNAME",
     "postinstall": "npm rebuild node-sass"
   },
   "devDependencies": {
