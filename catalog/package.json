@@ -17,8 +17,7 @@
         "build-publisher": "webpack --config webpack.publisher.js",
         "build-runtime": "webpack --config webpack.runtime.js",
         "build-host": "webpack --config webpack.host.js",
-        "publish": "webpack --config webpack.publisher.js && node dist/publisher/index.js && echo 'developer.doutoraovivo.com.br' > dist/website/CNAME",
-        "postinstall": "npx browserslist --update-db"
+        "publish": "webpack --config webpack.publisher.js && node dist/publisher/index.js && echo 'developer.doutoraovivo.com.br' > dist/website/CNAME"
     },
     "devDependencies": {
         "@azure/storage-blob": "12.4.1",
@@ -28,6 +27,7 @@
         "@types/knockout.mapping": "^2.0.35",
         "@types/knockout.validation": "0.0.37",
         "@types/lodash": "^4.14.162",
+        "@types/mime": "^2.0.3",
         "@types/mime-types": "^2.1.0",
         "@types/mocha": "8.0.3",
         "@types/node": "^14.11.10",
