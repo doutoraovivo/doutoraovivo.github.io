@@ -17,7 +17,7 @@
         "build-publisher": "webpack --config webpack.publisher.js",
         "build-runtime": "webpack --config webpack.runtime.js",
         "build-host": "webpack --config webpack.host.js",
-        "publish": "webpack --config webpack.publisher.js && node dist/publisher/index.js"
+        "publish": "webpack --config webpack.publisher.js && node dist/publisher/index.js && echo 'developer.doutoraovivo.com.br' > dist/website/CNAME"
     },
     "devDependencies": {
         "@types/chai": "^4.2.21",
@@ -68,6 +68,7 @@
         "await-parallel-limit": "^2.1.0",
         "body-parser": "^1.19.0",
         "class-transformer": "^0.3.2",
+        "class-validator": "^0.12.2",
         "client-oauth2": "4.3.3",
         "core-js": "^3.18.0",
         "cors": "^2.8.5",
