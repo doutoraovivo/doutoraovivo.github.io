@@ -1,0 +1,81 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MainRuntimeModule = void 0;
+require("@paperbits/core/ko/bindingHandlers/bindingHandlers.activate");
+require("@paperbits/core/ko/bindingHandlers/bindingHandlers.component");
+require("@paperbits/core/ko/bindingHandlers/bindingHandlers.focus");
+require("@paperbits/core/ko/bindingHandlers/bindingHandlers.scrollable");
+require("./bindingHandlers/acceptChange");
+require("./bindingHandlers/copyToClipboard");
+require("./bindingHandlers/markdown");
+require("./bindingHandlers/scrollintoview");
+require("./bindingHandlers/syntaxHighlight");
+const configuration_1 = require("@paperbits/common/configuration");
+const events_1 = require("@paperbits/common/events");
+const http_1 = require("@paperbits/common/http");
+const logging_1 = require("@paperbits/common/logging");
+const routing_1 = require("@paperbits/common/routing");
+const viewStack_1 = require("@paperbits/common/ui/viewStack");
+const bindingHandlers_1 = require("@paperbits/core/ko/bindingHandlers");
+const knockout_loaders_1 = require("@paperbits/core/ko/knockout.loaders");
+const defaultSessionManager_1 = require("./authentication/defaultSessionManager");
+const api_details_1 = require("./components/apis/details-of-api/ko/runtime/api-details");
+const runtime_1 = require("./components/apis/list-of-apis/ko/runtime");
+const defaultAuthenticator_1 = require("./components/defaultAuthenticator");
+const file_input_1 = require("./components/file-input/file-input");
+const code_sample_1 = require("./components/operations/operation-details/ko/runtime/code-sample");
+const operation_console_1 = require("./components/operations/operation-details/ko/runtime/operation-console");
+const operation_details_1 = require("./components/operations/operation-details/ko/runtime/operation-details");
+const type_definition_1 = require("./components/operations/operation-details/ko/runtime/type-definition");
+const operation_list_1 = require("./components/operations/operation-list/ko/runtime/operation-list");
+const tag_input_1 = require("./components/tag-input/tag-input");
+const validation_summary_1 = require("./components/users/validation-summary/ko/runtime/validation-summary");
+const unhandledErrorHandler_1 = require("./errors/unhandledErrorHandler");
+require("./polyfills");
+const routeHelper_1 = require("./routing/routeHelper");
+const services_1 = require("./services");
+const apiService_1 = require("./services/apiService");
+const backendService_1 = require("./services/backendService");
+const mapiClient_1 = require("./services/mapiClient");
+const oauthService_1 = require("./services/oauthService");
+const tagService_1 = require("./services/tagService");
+class MainRuntimeModule {
+    register(injector) {
+        injector.bindSingleton("logger", logging_1.ConsoleLogger);
+        injector.bindModule(new knockout_loaders_1.KnockoutRegistrationLoaders());
+        injector.bindSingleton("eventManager", events_1.DefaultEventManager);
+        injector.bindToCollection("autostart", unhandledErrorHandler_1.UnhandledErrorHandler);
+        injector.bindToCollection("autostart", bindingHandlers_1.BalloonBindingHandler);
+        injector.bindToCollection("autostart", bindingHandlers_1.ResizableBindingHandler);
+        injector.bind("apiList", runtime_1.ApiList);
+        injector.bind("apiListDropdown", runtime_1.ApiListDropdown);
+        injector.bind("apiListTiles", runtime_1.ApiListTiles);
+        injector.bind("apiDetails", api_details_1.ApiDetails);
+        injector.bind("operationDetails", operation_details_1.OperationDetails);
+        injector.bind("operationConsole", operation_console_1.OperationConsole);
+        injector.bind("typeDefinition", type_definition_1.TypeDefinitionViewModel);
+        injector.bind("codeSample", code_sample_1.CodeSampleViewModel);
+        injector.bind("fileInput", file_input_1.FileInput);
+        injector.bind("apiService", apiService_1.ApiService);
+        injector.bind("tagService", tagService_1.TagService);
+        injector.bind("validationSummary", validation_summary_1.ValidationSummary);
+        injector.bind("operationList", operation_list_1.OperationList);
+        injector.bind("operationDetails", operation_details_1.OperationDetails);
+        injector.bindSingleton("backendService", backendService_1.BackendService);
+        injector.bindSingleton("mapiClient", mapiClient_1.MapiClient);
+        injector.bindSingleton("httpClient", http_1.XmlHttpRequestClient);
+        injector.bindSingleton("settingsProvider", configuration_1.DefaultSettingsProvider);
+        injector.bindSingleton("authenticator", defaultAuthenticator_1.DefaultAuthenticator);
+        injector.bindSingleton("routeHelper", routeHelper_1.RouteHelper);
+        injector.bindSingleton("userService", services_1.StaticUserService);
+        injector.bindSingleton("oauthService", oauthService_1.OAuthService);
+        injector.bindSingleton("viewStack", viewStack_1.ViewStack);
+        injector.bindSingleton("sessionManager", defaultSessionManager_1.DefaultSessionManager);
+        injector.bind("tagInput", tag_input_1.TagInput);
+        injector.bindToCollection("autostart", location.href.includes("designtime=true")
+            ? routing_1.HistoryRouteHandler
+            : routing_1.LocationRouteHandler);
+    }
+}
+exports.MainRuntimeModule = MainRuntimeModule;
+//# sourceMappingURL=main.runtime.module.js.map

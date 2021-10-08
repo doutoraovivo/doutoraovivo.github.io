@@ -1,0 +1,1 @@
+{"version":3,"file":"scrollintoview.js","sourceRoot":"","sources":["scrollintoview.ts"],"names":[],"mappings":";;AAAA,+BAA+B;AAE/B,EAAE,CAAC,eAAe,CAAC,gBAAgB,CAAC,GAAG;IACnC,IAAI,EAAE,CAAC,OAAoB,EAAQ,EAAE;QACjC,OAAO,CAAC,cAAc,CAAC,EAAE,QAAQ,EAAE,QAAQ,EAAE,KAAK,EAAE,KAAK,EAAE,CAAC,CAAC;IACjE,CAAC;CACJ,CAAC"}

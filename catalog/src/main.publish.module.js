@@ -1,0 +1,60 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MainPublishModule = void 0;
+const openApiPublisher_1 = require("./publishing/openApiPublisher");
+const fs = require("fs");
+const path = require("path");
+const logging_1 = require("@paperbits/common/logging");
+const mapiClient_1 = require("./services/mapiClient");
+const listOfApis_module_1 = require("./components/apis/list-of-apis/ko/listOfApis.module");
+const detailsOfApi_module_1 = require("./components/apis/details-of-api/ko/detailsOfApi.module");
+const staticRouter_1 = require("./components/staticRouter");
+const userService_1 = require("./services/userService");
+const staticAuthenticator_1 = require("./components/staticAuthenticator");
+const operationList_module_1 = require("./components/operations/operation-list/ko/operationList.module");
+const operationDetails_publish_module_1 = require("./components/operations/operation-details/operationDetails.publish.module");
+const identityService_1 = require("./services/identityService");
+const validationSummary_module_1 = require("./components/users/validation-summary/validationSummary.module");
+const backendService_1 = require("./services/backendService");
+const roleService_1 = require("./services/roleService");
+const oauthService_1 = require("./services/oauthService");
+const fileSystemBlobStorage_1 = require("./components/fileSystemBlobStorage");
+const fileSystemDataProvider_1 = require("./persistence/fileSystemDataProvider");
+const fileSystemObjectStorage_1 = require("./persistence/fileSystemObjectStorage");
+const constants_1 = require("./constants");
+class MainPublishModule {
+    register(injector) {
+        injector.bindModule(new listOfApis_module_1.ListOfApisModule());
+        injector.bindModule(new detailsOfApi_module_1.DetailsOfApiModule());
+        injector.bindModule(new operationList_module_1.OperationListModule());
+        injector.bindModule(new operationDetails_publish_module_1.OperationDetailsPublishModule());
+        injector.bindModule(new validationSummary_module_1.ValidationSummaryModule());
+        injector.bindSingleton("backendService", backendService_1.BackendService);
+        injector.bindSingleton("userService", userService_1.StaticUserService);
+        injector.bindSingleton("roleService", roleService_1.StaticRoleService);
+        injector.bindSingleton("identityService", identityService_1.IdentityService);
+        injector.bindSingleton("router", staticRouter_1.StaticRouter);
+        injector.bindSingleton("authenticator", staticAuthenticator_1.StaticAuthenticator);
+        injector.bindSingleton("mapiClient", mapiClient_1.MapiClient);
+        injector.bindSingleton("logger", logging_1.ConsoleLogger);
+        injector.bindSingleton("oauthService", oauthService_1.OAuthService);
+        const configPath = path.resolve(__dirname, "config.json");
+        const configRaw = fs.readFileSync(configPath, "utf8");
+        const config = JSON.parse(configRaw);
+        const mediaFolder = config[constants_1.mediaPathSettingName];
+        const contentFolder = config[constants_1.dataPathSettingName];
+        const openapiSpecsFolder = config[constants_1.openapiSpecsPathSettingName];
+        const basePath = path.dirname(__filename);
+        const contentFilePath = path.resolve(basePath, contentFolder, constants_1.websiteContentFileName);
+        const specsFolderPath = path.resolve(basePath, openapiSpecsFolder);
+        const mediaFolderPath = path.resolve(basePath, mediaFolder);
+        injector.bindInstance("specsBlobStorage", new fileSystemBlobStorage_1.FileSystemBlobStorage(specsFolderPath));
+        injector.bindInstance("blobStorage", new fileSystemBlobStorage_1.FileSystemBlobStorage(mediaFolderPath));
+        injector.bindInstance("dataProvider", new fileSystemDataProvider_1.FileSystemDataProvider(contentFilePath));
+        injector.bindInstance("objectStorage", new fileSystemObjectStorage_1.FileSystemObjectStorage(contentFilePath));
+        injector.bindInstance("outputBlobStorage", new fileSystemBlobStorage_1.FileSystemBlobStorage(path.resolve("../website")));
+        injector.bindToCollection("publishers", openApiPublisher_1.OpenApiPublisher);
+    }
+}
+exports.MainPublishModule = MainPublishModule;
+//# sourceMappingURL=main.publish.module.js.map

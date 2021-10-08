@@ -1,0 +1,1 @@
+{"version":3,"file":"knownHttpHeaders.js","sourceRoot":"","sources":["knownHttpHeaders.ts"],"names":[],"mappings":";;;AAAa,QAAA,gBAAgB,GAAG;IAC5B,aAAa,EAAE,eAAe;IAC9B,YAAY,EAAE,eAAe;IAC7B,WAAW,EAAE,cAAc;IAC3B,sBAAsB,EAAE,2BAA2B;IACnD,YAAY,EAAE,gBAAgB;IAC9B,oBAAoB,EAAE,yBAAyB;IAC/C,eAAe,EAAE,oBAAoB;IACrC,UAAU,EAAE,YAAY;CAC3B,CAAC"}

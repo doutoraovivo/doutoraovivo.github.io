@@ -1,0 +1,1 @@
+{"version":3,"file":"inversifyAdapter.js","sourceRoot":"","sources":["inversifyAdapter.ts"],"names":[],"mappings":";;;AAGA,MAAa,gBAAgB;IACzB,YAA6B,QAA2B;QAA3B,aAAQ,GAAR,QAAQ,CAAmB;IAAI,CAAC;IAEtD,GAAG,CAAI,gBAAqC,EAAE,MAAe;QAChE,OAAO,IAAI,CAAC,QAAQ,CAAC,WAAW,CAAC,CAAC,OAAO,CAAI,gBAAgB,CAAC,CAAC;IACnE,CAAC;CACJ;AAND,4CAMC"}

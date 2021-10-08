@@ -1,0 +1,60 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MainDesignModule = void 0;
+const Constants = require("./constants");
+const httpDataProvider_1 = require("./persistence/httpDataProvider");
+const unsavedChangesRouteGuard_1 = require("./routing/unsavedChangesRouteGuard");
+const defaultAuthenticator_1 = require("./components/defaultAuthenticator");
+const logging_1 = require("@paperbits/common/logging");
+const listOfApis_module_1 = require("./components/apis/list-of-apis/ko/listOfApis.module");
+const listOfApisEditor_module_1 = require("./components/apis/list-of-apis/ko/listOfApisEditor.module");
+const detailsOfApi_module_1 = require("./components/apis/details-of-api/ko/detailsOfApi.module");
+const detailsOfApiEditor_module_1 = require("./components/apis/details-of-api/ko/detailsOfApiEditor.module");
+const services_1 = require("./services");
+const operationList_module_1 = require("./components/operations/operation-list/ko/operationList.module");
+const operationListEditor_module_1 = require("./components/operations/operation-list/ko/operationListEditor.module");
+const operationDetails_design_module_1 = require("./components/operations/operation-details/operationDetails.design.module");
+const app_1 = require("./components/app/app");
+const validationSummary_module_1 = require("./components/users/validation-summary/validationSummary.module");
+const validationSummary_design_module_1 = require("./components/users/validation-summary/validationSummary.design.module");
+const backendService_1 = require("./services/backendService");
+const roleService_1 = require("./services/roleService");
+const oauthService_1 = require("./services/oauthService");
+const routing_1 = require("@paperbits/common/routing");
+const oldContentRouteGuard_1 = require("./routing/oldContentRouteGuard");
+const remoteObjectStorage_1 = require("./persistence/remoteObjectStorage");
+const relativePathRouter_1 = require("./routing/relativePathRouter");
+const remoteBlobStorage_1 = require("./persistence/remoteBlobStorage");
+const popup_1 = require("@paperbits/core/popup");
+class MainDesignModule {
+    register(injector) {
+        injector.bindModule(new listOfApis_module_1.ListOfApisModule());
+        injector.bindModule(new listOfApisEditor_module_1.ListOfApisEditorModule());
+        injector.bindModule(new detailsOfApi_module_1.DetailsOfApiModule());
+        injector.bindModule(new detailsOfApiEditor_module_1.DetailsOfApiEditorModule());
+        injector.bindModule(new operationList_module_1.OperationListModule());
+        injector.bindModule(new operationListEditor_module_1.OperationListEditorModule());
+        injector.bindModule(new operationDetails_design_module_1.OperationDetailsDesignModule());
+        injector.bindModule(new validationSummary_design_module_1.ValidationSummaryDesignModule());
+        injector.bindModule(new validationSummary_module_1.ValidationSummaryModule());
+        injector.bindSingleton("app", app_1.App);
+        injector.bindSingleton("logger", logging_1.ConsoleLogger);
+        injector.bindSingleton("backendService", backendService_1.BackendService);
+        injector.bindSingleton("roleService", roleService_1.StaticRoleService);
+        injector.bindSingleton("identityService", services_1.IdentityService);
+        injector.bindSingleton("mapiClient", services_1.MapiClient);
+        injector.bindSingleton("authenticator", defaultAuthenticator_1.DefaultAuthenticator);
+        injector.bindSingleton("dataProvider", httpDataProvider_1.HttpDataProvider);
+        injector.bindSingleton("objectStorage", remoteObjectStorage_1.RemoteObjectStorage);
+        injector.bindSingleton("blobStorage", remoteBlobStorage_1.RemoteBlobStorage);
+        injector.bindToCollection("routeGuards", oldContentRouteGuard_1.OldContentRouteGuard);
+        injector.bindToCollection("routeGuards", unsavedChangesRouteGuard_1.UnsavedChangesRouteGuard);
+        injector.bindInstance("reservedPermalinks", Constants.reservedPermalinks);
+        injector.bindSingleton("oauthService", oauthService_1.OAuthService);
+        injector.bindSingleton("router", relativePathRouter_1.RelativePathRouter);
+        injector.bindToCollection("autostart", routing_1.HistoryRouteHandler);
+        injector.bindModule(new popup_1.PopupDesignModule());
+    }
+}
+exports.MainDesignModule = MainDesignModule;
+//# sourceMappingURL=main.design.module.js.map
