@@ -1,4 +1,3 @@
 {
-    "environment": "runtime",
-    "managementApiUrl": "https://developer.doutoraovivo.com.br"
+    "environment": "runtime"
 }
