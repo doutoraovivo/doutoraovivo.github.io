@@ -1,5 +1,3 @@
-[![Publish and deploy to GitHub Pages](https://github.com/doutoraovivo/doutoraovivo.github.io/actions/workflows/publish-on-checkin.yml/badge.svg)](https://github.com/doutoraovivo/doutoraovivo.github.io/actions/workflows/publish-on-checkin.yml)
-
 # API Portal
 
 API Portal lets you create and publish a customized site with API documentation, for free and without writing any code. GitHub-based workflow enables collaboration between API providers and API consumers, source control, automation, and free hosting.
