@@ -1,6 +1,140 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/person/{id}/diagnostic": {
+      "post": {
+        "operationId": "CreateController_create",
+        "summary": "Cria um objeto DIAGNOSTIC",
+        "description": "\n    O que é DIAGNOSTIC?:\n      * DIAGNOSTIC representa o resultado de um exame que pertence ao paciente (person)\n      * O BODY da requisição precisa ter no máximo 6MB de tamanho\n\n    Campo opcional caso deseje enviar arquivos:\n      * result_file: \n          base_64: arquivo no formato base64 com tamanho máximo de 5MB\n          mime_type: tipo do arquivo. EX: image/jpeg, image/png, application/pdf\n    ",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "$ref": "#/components/schemas/DiagnosticCreateRequestSchema"
+              },
+              "examples": {
+                "requiredOnly": {
+                  "description": "Somente campos obrigatórios. Note que o campo ID segue a regra descrita acima.",
+                  "summary": "Somente campos obrigatórios",
+                  "value": {
+                    "remetent": "Laboratório X",
+                    "examination_name": "Hemograma",
+                    "examination_date": "2021-08-31T12:24:30.295Z",
+                    "result_description": "Resultado negativo"
+                  }
+                },
+                "full": {
+                  "summary": "Todos os campos",
+                  "description": "Exemplo com todos os campos possíveis",
+                  "value": {
+                    "remetent": "Laboratório X",
+                    "examination_name": "Hemograma",
+                    "examination_date": "2021-08-31T12:24:30.295Z",
+                    "result_description": "Resultado negativo",
+                    "result_file": {
+                      "base_64": "9j4AAQSkZJRgABAQEASABIAAD/4QcdRXhpZgAASUkqAAgAAAALAAABBAABAAAAcAgAABABAgAUAAAAkgAAAAEBBAABAAAAQAsAADIBAgAUAAAApgAAABIBAwABAAAAAQAAABMCAwABAAAAAQAAAGmHBAABAAAA0wAAACgBAwABAAAAAgAAABoBBQABAAAAugAAABsBBQABAAAAwgAAAA8BAgAJAAAAygAAAOsGAABtb3Rvcm9sYSBvbmUgdmlzaW9uADIwMjE6MDI6MjUgMTY6MjE6MzQASAAAAAEAAABIAAAAAQAAAG1vdG9yb2xhACQAfJIHALgDAACJAgAAJ4gDAAEAAADdAAAAIogDAAEAAAACAAAAnYIFAAEAAABBBgAAmoIFAAEAAABJBgAAkpICAAUAAABRBgAAkZICAAUAAABWBgAAkJICA",
+                      "mime_type": "image/png"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Person successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiagnosticCreateRequestSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation Error (field type)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error (logic)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "create"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/person/{id}/diagnostic/{diagnostic_id}": {
+      "delete": {
+        "operationId": "DeleteController_delete",
+        "summary": "Exclui um objeto DIAGNOSTIC",
+        "description": "\n    O que é DIAGNOSTIC?:\n      * DIAGNOSTIC representa o resultado de um exame que pertence ao paciente (person)\n    ",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "O id de person",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "diagnostic_id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "delete"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
     "/person": {
       "post": {
         "operationId": "CreateController_create",
@@ -253,6 +387,175 @@
   ],
   "components": {
     "schemas": {
+      "ResultFileSchema": {
+        "type": "object",
+        "properties": {
+          "mime_type": {
+            "type": "string",
+            "description": "File format (MIME type)",
+            "enum": [
+              "application/epub+zip",
+              "application/gzip",
+              "application/json",
+              "application/ld+json",
+              "application/msword",
+              "application/octet-stream",
+              "application/ogg",
+              "application/pdf",
+              "application/rtf",
+              "application/vnd.amazon.ebook",
+              "application/vnd.apple.installer+xml",
+              "application/vnd.mozilla.xul+xml",
+              "application/vnd.ms-excel",
+              "application/vnd.ms-fontobject",
+              "application/vnd.ms-powerpoint",
+              "application/vnd.oasis.opendocument.presentation",
+              "application/vnd.oasis.opendocument.spreadsheet",
+              "application/vnd.oasis.opendocument.text",
+              "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+              "application/vnd.rar",
+              "application/vnd.visio",
+              "application/x-7z-compressed",
+              "application/x-abiword",
+              "application/x-bzip",
+              "application/x-bzip2",
+              "application/x-csh",
+              "application/x-freearc",
+              "application/x-httpd-php",
+              "application/x-sh",
+              "application/x-shockwave-flash",
+              "application/x-tar",
+              "application/xhtml+xml",
+              "application/xml",
+              "application/zip",
+              "audio/3gpp",
+              "audio/3gpp2",
+              "audio/aac",
+              "audio/midi audio/x-midi",
+              "audio/mpeg",
+              "audio/ogg",
+              "audio/opus",
+              "audio/wav",
+              "audio/webm",
+              "font/otf",
+              "font/ttf",
+              "font/woff",
+              "font/woff2",
+              "image/bmp",
+              "image/gif",
+              "image/jpeg",
+              "image/png",
+              "image/svg+xml",
+              "image/tiff",
+              "image/vnd.microsoft.icon",
+              "image/webp",
+              "text/calendar",
+              "text/css",
+              "text/csv",
+              "text/html",
+              "text/javascript",
+              "text/plain",
+              "text/xml",
+              "video/3gpp",
+              "video/3gpp2",
+              "video/mp2t",
+              "video/mpeg",
+              "video/ogg",
+              "video/webm",
+              "video/x-msvideo"
+            ]
+          },
+          "base_64": {
+            "type": "string",
+            "format": "byte",
+            "description": "Examination result file base64"
+          }
+        },
+        "required": [
+          "mime_type",
+          "base_64"
+        ]
+      },
+      "DiagnosticCreateRequestSchema": {
+        "type": "object",
+        "properties": {
+          "remetent": {
+            "type": "string",
+            "description": "Lab that has made the examination"
+          },
+          "examination_name": {
+            "type": "string",
+            "description": "Examination name"
+          },
+          "examination_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Examination Date"
+          },
+          "result_description": {
+            "type": "string",
+            "description": "Examination result description"
+          },
+          "result_file": {
+            "description": "Endereço",
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResultFileSchema"
+              }
+            ]
+          }
+        },
+        "required": [
+          "remetent",
+          "examination_name",
+          "examination_date",
+          "result_description"
+        ]
+      },
+      "i18nMessageConfig": {
+        "type": "object",
+        "properties": {}
+      },
+      "DavHttpExceptionDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "description": "HTTP Response Code"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error Message"
+          },
+          "i18n": {
+            "description": "For use with Frontend only",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/i18nMessageConfig"
+              }
+            ]
+          },
+          "detail": {
+            "description": "Individual Messages",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "trace": {
+            "type": "string",
+            "description": "Trace ID - pass it to DaV support"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "trace"
+        ]
+      },
       "AddressSchema": {
         "type": "object",
         "properties": {
@@ -415,47 +718,6 @@
             "description": "Unique Identificator"
           }
         }
-      },
-      "i18nMessageConfig": {
-        "type": "object",
-        "properties": {}
-      },
-      "DavHttpExceptionDto": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "number",
-            "description": "HTTP Response Code"
-          },
-          "message": {
-            "type": "string",
-            "description": "Error Message"
-          },
-          "i18n": {
-            "description": "For use with Frontend only",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/i18nMessageConfig"
-              }
-            ]
-          },
-          "detail": {
-            "description": "Individual Messages",
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "trace": {
-            "type": "string",
-            "description": "Trace ID - pass it to DaV support"
-          }
-        },
-        "required": [
-          "code",
-          "message",
-          "trace"
-        ]
       },
       "PersonReadResponseSchema": {
         "type": "object",

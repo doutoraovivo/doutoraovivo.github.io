@@ -1,0 +1,253 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/term/accept": {
+      "get": {
+        "operationId": "ReadController_getAll",
+        "summary": "List terms accepted by users",
+        "parameters": [
+          {
+            "name": "x-exclusive-start-key",
+            "required": false,
+            "in": "header",
+            "description": "key da ultima paginação",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appointment_id",
+            "required": false,
+            "in": "query",
+            "description": "Id of appointment",
+            "example": "2683ae7a-c63a-434e-8ead-327c759822a2",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "user_id",
+            "required": false,
+            "in": "query",
+            "description": "User id",
+            "example": "2683ae7a-c63a-434e-8ead-327c759823a1",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date_to",
+            "required": false,
+            "in": "query",
+            "description": "Accepted terms to",
+            "example": "2021-05-27T21:08:56.099Z",
+            "schema": {
+              "type": "date-time"
+            }
+          },
+          {
+            "name": "date_from",
+            "required": false,
+            "in": "query",
+            "description": "Accepted terms from",
+            "example": "2021-05-25T21:08:56.099Z",
+            "schema": {
+              "type": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Accepted terms list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TermAcceptReadResponseSchema"
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No accepted terms were found"
+          }
+        },
+        "tags": [
+          "read"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Term",
+    "description": "Gerenciamento dos termos de uso do sistema",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "https://api.v2.doutoraovivo.com.br",
+      "description": "ambiente de PRODUÇÃO"
+    },
+    {
+      "url": "https://api.v2.hom.doutoraovivo.com.br",
+      "description": "ambiente de HOMOLOGAÇÃO"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "UserSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identificator"
+          },
+          "name": {
+            "type": "string",
+            "description": "User name"
+          },
+          "registration": {
+            "type": "string",
+            "description": "User registration such as cpf, crm or similar"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "registration"
+        ]
+      },
+      "LocationSchema": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "City",
+            "example": "São Paulo"
+          },
+          "countryname": {
+            "type": "string",
+            "description": "Country name",
+            "example": "BR"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Latitude",
+            "example": -23.982
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Longitude",
+            "example": -23.092
+          },
+          "region": {
+            "type": "string",
+            "description": "Region",
+            "example": "SP"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source",
+            "example": "IP"
+          }
+        },
+        "required": [
+          "city",
+          "countryname",
+          "latitude",
+          "longitude",
+          "region",
+          "source"
+        ]
+      },
+      "TermAcceptReadResponseSchema": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Accept date"
+          },
+          "appointment_id": {
+            "type": "string",
+            "description": "Appointment unique Identificator"
+          },
+          "user": {
+            "description": "User",
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserSchema"
+              }
+            ]
+          },
+          "path_file": {
+            "type": "string",
+            "description": "Accept term path file"
+          },
+          "description": {
+            "type": "string",
+            "description": "Accept term description"
+          },
+          "accept_type": {
+            "type": "string",
+            "description": "Accept type",
+            "enum": [
+              "ATTENDANCE",
+              "LOGIN",
+              "SIGNUP"
+            ]
+          },
+          "location": {
+            "description": "Location",
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LocationSchema"
+              }
+            ]
+          },
+          "ip": {
+            "type": "string",
+            "description": "Accept term user ip"
+          },
+          "browser": {
+            "type": "string",
+            "description": "Browser used to accept term"
+          }
+        },
+        "required": [
+          "date",
+          "user",
+          "path_file",
+          "description",
+          "accept_type",
+          "location",
+          "ip",
+          "browser"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ]
+}
