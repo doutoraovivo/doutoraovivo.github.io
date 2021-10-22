@@ -5,7 +5,7 @@
       "post": {
         "operationId": "CreateController_create",
         "summary": "Cria um objeto APPOINTMENT",
-        "description": "\n      Sobre o APPOINTMENT:\n      * APPOINTMENT representa um agendamento de telemedicina no sistema\n      * A data inicial START_DATE_TIME não pode estar no passado\n        e também não pode ser maior do que a data final END_DATE_TIME\n      * O appointment criado é gerado com o status AGE (Agendado)\n      * É preciso ter no mínimo 2 e no máximo 4 participantes\n    ",
+        "description": "\n      Sobre o APPOINTMENT:\n        * APPOINTMENT representa um agendamento de telemedicina no sistema\n        * A data inicial START_DATE_TIME não pode estar no passado\n          e também não pode ser maior do que a data final END_DATE_TIME\n        * O appointment criado é gerado com o status AGE (Agendado)\n        * É preciso ter no mínimo 2 e no máximo 4 participantes\n        \n      Callback:\n        * Durante o atendimento, a sala envia informação sobre os eventos que ocorrem na sala entre os participantes, \n          como um participante entrar ou sair da sala ou o participante principal (Profissional) encerrar a sessão. \n          Isso é muito útil para o integrador poder avisar os participantes interessados (ex. push no celular/sms/email para o profissional \n          saber que o paciente o está esperando)\n        * Para utilizar essa opção, o cliente com a conta de administrador deve cadastrar uma URL de seu sistema que receberá um POST com o evento.\n        * Eventos enviados:\n            participantWaitingRoom - O participante entrou na sala de espera\n            participantConnected - O participante entrou no atendimento\n            participantDisconnected - O participante saiu da sala\n            sessionFinished - O participante principal encerrou a sessão\n            systemFinished - O sistema finalizou a consulta\n    ",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -91,6 +91,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Notificação de callback enviada durante o atendimento",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallbackSchema"
                 }
               }
             }
@@ -424,6 +434,50 @@
           "code",
           "message",
           "trace"
+        ]
+      },
+      "CallbackSchema": {
+        "type": "object",
+        "properties": {
+          "appointment": {
+            "type": "string",
+            "description": "appointment id",
+            "example": "42aa26f0-276e-11ec-9621-0242ac130002"
+          },
+          "participant_id": {
+            "type": "string",
+            "description": "participant id",
+            "example": "42aa26f0-276e-11ec-9621-0242ac130002"
+          },
+          "name": {
+            "type": "string",
+            "description": "participant name",
+            "example": "João Maria Silva"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "participant cpf",
+            "example": "45832378899"
+          },
+          "event": {
+            "type": "string",
+            "description": "event type",
+            "example": "participantWaitingRoom",
+            "enum": [
+              "participantConnected",
+              "participantDisconnected",
+              "participantWaitingRoom",
+              "sessionFinished",
+              "systemFinished"
+            ]
+          }
+        },
+        "required": [
+          "appointment",
+          "participant_id",
+          "name",
+          "cpf",
+          "event"
         ]
       },
       "ParticipantSchema": {

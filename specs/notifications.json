@@ -1,0 +1,99 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/notifications/report": {
+      "get": {
+        "operationId": "ReportController_getAll",
+        "summary": "REPORT de notificações",
+        "description": "Histórico de notificações",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "$ref": "#/components/schemas/NotificationsHistoryModel"
+              },
+              "examples": {
+                "full": {
+                  "summary": "Todos os campos",
+                  "description": "Exemplo com todos os campos possíveis",
+                  "value": [
+                    {
+                      "company_id": "4fa5a05a-2e97-46e6-04c3-8a0fa9a94b2a",
+                      "date_time": "2021-08-22T22:51:00.607Z",
+                      "date_time_id": "2021-08-22T22:51:00.607Z@e08478d3-d294-4e35-81e3-094e950029f5",
+                      "delivery_status": 0,
+                      "from": "5511991234567",
+                      "id": "e08478d3-d294-4e35-81e3-094e950029f5",
+                      "participant_id": "254aceb4-d9d9-4ad8-b94b-4f6532378541",
+                      "participant_name": "Joao M Oliveira",
+                      "participant_name_lc": "lucas a s oliveira",
+                      "participant_role": "patient",
+                      "service": "Provedor",
+                      "template_name": "APPOINTMENT_CONFIRMED_WHATSAPP",
+                      "to": "5511998765432",
+                      "type": "whatsapp"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notification"
+          },
+          "204": {
+            "description": "NOT_FOUND"
+          }
+        },
+        "security": [
+          {
+            "AuthorizationAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Notification",
+    "description": "API de de notification report",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "https://api.v2.doutoraovivo.com.br",
+      "description": "ambiente de PRODUÇÃO"
+    },
+    {
+      "url": "https://api.v2.hom.doutoraovivo.com.br",
+      "description": "ambiente de HOMOLOGAÇÃO"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "NotificationsHistoryModel": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    "securitySchemes": {
+      "AuthorizationAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "authorization"
+      }
+    }
+  },
+  "security": [
+    {
+      "AuthorizationAuth": []
+    }
+  ]
+}

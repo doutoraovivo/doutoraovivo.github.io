@@ -1,5 +1,166 @@
 {
   "openapi": "3.0.0",
+  "info": {
+    "title": "Doutor ao Vivo - API - Voucher",
+    "description": "All about your vouchers",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "VoucherCreateRequestDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator"
+          },
+          "description": {
+            "type": "string",
+            "description": "Voucher description"
+          },
+          "expire": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration date"
+          },
+          "limit_use": {
+            "type": "number",
+            "description": "Number of times it can be used",
+            "example": 10
+          },
+          "discount": {
+            "type": "number",
+            "description": "Value",
+            "example": 10
+          },
+          "type_discount": {
+            "type": "string",
+            "description": "Discount type (percentage or currency value)",
+            "enum": [
+              "PERCENTAGE",
+              "VALUE"
+            ]
+          },
+          "person": {
+            "type": "string",
+            "description": "Id of specific patient to use voucher"
+          },
+          "professional": {
+            "type": "string",
+            "description": "Id of specific professional to use voucher"
+          }
+        },
+        "required": [
+          "description",
+          "expire"
+        ]
+      },
+      "VoucherCreateResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator"
+          }
+        }
+      },
+      "TrackSchema": {
+        "type": "object",
+        "properties": {
+          "appointment_id": {
+            "type": "string",
+            "description": "Id of specific appointment where voucher was used"
+          },
+          "protocol": {
+            "type": "string",
+            "description": "Protocol of specific appointment where voucher was used"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Use date"
+          },
+          "person": {
+            "type": "string",
+            "description": "Id of person that have used voucher"
+          }
+        },
+        "required": [
+          "date"
+        ]
+      },
+      "VoucherReadResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator"
+          },
+          "description": {
+            "type": "string",
+            "description": "Voucher description"
+          },
+          "expire": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration date"
+          },
+          "limit_use": {
+            "type": "number",
+            "description": "Number of times it can be used",
+            "example": 10
+          },
+          "discount": {
+            "type": "number",
+            "description": "Value",
+            "example": 10
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Active",
+            "example": true
+          },
+          "type_discount": {
+            "type": "string",
+            "description": "Discount type (percentage or currency value)",
+            "enum": [
+              "PERCENTAGE",
+              "VALUE"
+            ]
+          },
+          "person": {
+            "type": "string",
+            "description": "Id of specific patient to use voucher"
+          },
+          "professional": {
+            "type": "string",
+            "description": "Id of specific professional to use voucher"
+          },
+          "track": {
+            "description": "Registers of voucher uses",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrackSchema"
+            }
+          }
+        },
+        "required": [
+          "description",
+          "expire"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    }
+  },
   "paths": {
     "/voucher": {
       "post": {
@@ -9,40 +170,40 @@
         "parameters": [],
         "requestBody": {
           "required": true,
+          "examples": {
+            "requiredOnly": {
+              "description": "Somente campos obrigatórios. Note que o campo ID segue a regra descrita acima.",
+              "summary": "Somente campos obrigatórios",
+              "value": {
+                "id": "VOUCHER100",
+                "description": "Voucher para consulta",
+                "expire": "2021-05-25T21:08:56.099Z",
+                "limit_use": 10,
+                "discount": 10,
+                "type_discount": "PERCENTAGE"
+              }
+            },
+            "full": {
+              "summary": "Todos os campos",
+              "description": "Exemplo com todos os campos possíveis",
+              "value": {
+                "id": "VOUCHER100",
+                "description": "Voucher para consulta",
+                "expire": "2021-05-25T21:08:56.099Z",
+                "limit_use": 10,
+                "discount": 10,
+                "type_discount": "PERCENTAGE",
+                "person": "9588ccf4-877c-4f29-8a0e-af1536588ac8",
+                "professional": "5e926fd0-339a-420d-8dd3-e65fa62d2907"
+              }
+            }
+          },
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
                 "$ref": "#/components/schemas/VoucherCreateRequestDto"
-              },
-              "examples": {
-                "requiredOnly": {
-                  "description": "Somente campos obrigatórios. Note que o campo ID segue a regra descrita acima.",
-                  "summary": "Somente campos obrigatórios",
-                  "value": {
-                    "id": "VOUCHER100",
-                    "description": "Voucher para consulta",
-                    "expire": "2021-05-25T21:08:56.099Z",
-                    "limit_use": 10,
-                    "discount": 10,
-                    "type_discount": "PERCENTAGE"
-                  }
-                },
-                "full": {
-                  "summary": "Todos os campos",
-                  "description": "Exemplo com todos os campos possíveis",
-                  "value": {
-                    "id": "VOUCHER100",
-                    "description": "Voucher para consulta",
-                    "expire": "2021-05-25T21:08:56.099Z",
-                    "limit_use": 10,
-                    "discount": 10,
-                    "type_discount": "PERCENTAGE",
-                    "person": "9588ccf4-877c-4f29-8a0e-af1536588ac8",
-                    "professional": "5e926fd0-339a-420d-8dd3-e65fa62d2907"
-                  }
-                }
               }
             }
           }
@@ -143,6 +304,7 @@
             "in": "query",
             "description": "Type discount",
             "example": "PERCENTAGE",
+            "isArray": false,
             "schema": {
               "enum": [
                 "PERCENTAGE",
@@ -299,176 +461,6 @@
             "ApiKeyAuth": []
           }
         ]
-      }
-    }
-  },
-  "info": {
-    "title": "Voucher",
-    "description": "Criação e manutenção de Vouchers",
-    "version": "1.0.0",
-    "contact": {}
-  },
-  "tags": [],
-  "servers": [
-    {
-      "url": "https://api.v2.doutoraovivo.com.br",
-      "description": "ambiente de PRODUÇÃO"
-    },
-    {
-      "url": "https://api.v2.hom.doutoraovivo.com.br",
-      "description": "ambiente de HOMOLOGAÇÃO"
-    }
-  ],
-  "components": {
-    "schemas": {
-      "VoucherCreateRequestDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique Identificator"
-          },
-          "description": {
-            "type": "string",
-            "description": "Voucher description"
-          },
-          "expire": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Expiration date"
-          },
-          "limit_use": {
-            "type": "number",
-            "description": "Number of times it can be used",
-            "example": 10
-          },
-          "discount": {
-            "type": "number",
-            "description": "Value",
-            "example": 10
-          },
-          "type_discount": {
-            "type": "string",
-            "description": "Discount type (percentage or currency value)",
-            "enum": [
-              "PERCENTAGE",
-              "VALUE"
-            ]
-          },
-          "person": {
-            "type": "string",
-            "description": "Id of specific patient to use voucher"
-          },
-          "professional": {
-            "type": "string",
-            "description": "Id of specific professional to use voucher"
-          }
-        },
-        "required": [
-          "description",
-          "expire"
-        ]
-      },
-      "VoucherCreateResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique Identificator"
-          }
-        }
-      },
-      "TrackSchema": {
-        "type": "object",
-        "properties": {
-          "appointment_id": {
-            "type": "string",
-            "description": "Id of specific appointment where voucher was used"
-          },
-          "protocol": {
-            "type": "string",
-            "description": "Protocol of specific appointment where voucher was used"
-          },
-          "date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Use date"
-          },
-          "person": {
-            "type": "string",
-            "description": "Id of person that have used voucher"
-          }
-        },
-        "required": [
-          "date"
-        ]
-      },
-      "VoucherReadResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique Identificator"
-          },
-          "description": {
-            "type": "string",
-            "description": "Voucher description"
-          },
-          "expire": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Expiration date"
-          },
-          "limit_use": {
-            "type": "number",
-            "description": "Number of times it can be used",
-            "example": 10
-          },
-          "discount": {
-            "type": "number",
-            "description": "Value",
-            "example": 10
-          },
-          "status": {
-            "type": "boolean",
-            "description": "Active",
-            "example": true
-          },
-          "type_discount": {
-            "type": "string",
-            "description": "Discount type (percentage or currency value)",
-            "enum": [
-              "PERCENTAGE",
-              "VALUE"
-            ]
-          },
-          "person": {
-            "type": "string",
-            "description": "Id of specific patient to use voucher"
-          },
-          "professional": {
-            "type": "string",
-            "description": "Id of specific professional to use voucher"
-          },
-          "track": {
-            "description": "Registers of voucher uses",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrackSchema"
-            }
-          }
-        },
-        "required": [
-          "description",
-          "expire"
-        ]
-      }
-    },
-    "securitySchemes": {
-      "ApiKeyAuth": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "x-api-key"
       }
     }
   },
