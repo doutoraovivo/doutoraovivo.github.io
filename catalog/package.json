@@ -17,7 +17,7 @@
         "build-publisher": "webpack --config webpack.publisher.js",
         "build-runtime": "webpack --config webpack.runtime.js",
         "build-host": "webpack --config webpack.host.js",
-        "publish": "webpack --config webpack.publisher.js && node dist/publisher/index.js"
+        "publish": "webpack --config webpack.publisher.js && node dist/publisher/index.js && echo 'developer.doutoraovivo.com.br' > dist/website/CNAME"
     },
     "devDependencies": {
         "@types/chai": "^4.3.0",
