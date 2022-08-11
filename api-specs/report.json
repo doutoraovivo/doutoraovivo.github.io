@@ -1,0 +1,333 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/report/financial/{id}": {
+      "get": {
+        "operationId": "ReadController_get",
+        "summary": "Pesquisa um objeto REPORT FINANCIAL",
+        "description": "Retorna um objeto de relatório financeiro",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Financial",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinancialReadResponseSchema"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Financial not found"
+          }
+        },
+        "tags": [
+          "read"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/report/financial": {
+      "get": {
+        "operationId": "ReadController_getAll",
+        "summary": "RETORNA relatório financeiro de atendimentos",
+        "parameters": [
+          {
+            "name": "x-exclusive-start-key",
+            "required": false,
+            "in": "header",
+            "description": "key da ultima paginação",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "value_charged_to",
+            "required": false,
+            "in": "query",
+            "description": "Value charged to",
+            "example": 100,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "value_charged_from",
+            "required": false,
+            "in": "query",
+            "description": "Value charged from",
+            "example": 100,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "value_charged",
+            "required": false,
+            "in": "query",
+            "description": "Value charged",
+            "example": 100,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "start_date_time_to",
+            "required": false,
+            "in": "query",
+            "description": "Start date time to",
+            "example": "2021-05-27T21:08:56.099Z",
+            "schema": {
+              "type": "date-time"
+            }
+          },
+          {
+            "name": "start_date_time_from",
+            "required": false,
+            "in": "query",
+            "description": "Start date tim from",
+            "example": "2021-05-25T21:08:56.099Z",
+            "schema": {
+              "type": "date-time"
+            }
+          },
+          {
+            "name": "start_date_time",
+            "required": false,
+            "in": "query",
+            "description": "Start date time",
+            "example": "2021-05-26T21:08:56.099Z",
+            "schema": {
+              "type": "date-time"
+            }
+          },
+          {
+            "name": "professional_id",
+            "required": false,
+            "in": "query",
+            "description": "professional id",
+            "example": "ID_PROFESSIONAL",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "patient_id",
+            "required": false,
+            "in": "query",
+            "description": "patient id",
+            "example": "ID_PATIENT",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "voucher",
+            "required": false,
+            "in": "query",
+            "description": "voucher id",
+            "example": "VOUCHER",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Financial",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinancialReadResponseSchema"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "read"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Report",
+    "description": "Extração de dados e relatórios sobre suas atividades no sistema",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "https://api.v2.doutoraovivo.com.br",
+      "description": "ambiente de PRODUÇÃO"
+    },
+    {
+      "url": "https://api.v2.hom.doutoraovivo.com.br",
+      "description": "ambiente de HOMOLOGAÇÃO"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "ParticipantsSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator"
+          },
+          "role": {
+            "type": "string",
+            "description": "Participant role"
+          },
+          "mail": {
+            "type": "string",
+            "description": "Participant mail"
+          },
+          "name": {
+            "type": "string",
+            "description": "Participant name"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "Participant cpf"
+          },
+          "crm": {
+            "type": "string",
+            "description": "Participant crm"
+          },
+          "is_payer": {
+            "type": "boolean",
+            "description": "Participant is payer"
+          },
+          "time_in_appointment": {
+            "type": "number",
+            "description": "Participant time in appointment"
+          }
+        },
+        "required": [
+          "role",
+          "mail",
+          "name",
+          "cpf",
+          "crm",
+          "is_payer",
+          "time_in_appointment"
+        ]
+      },
+      "FinancialReadResponseSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator"
+          },
+          "status_appointment": {
+            "type": "string",
+            "description": "Appointment status"
+          },
+          "start_date_time": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of appointment schedule"
+          },
+          "date_start_attendance": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of appointment start"
+          },
+          "participants": {
+            "format": "date",
+            "description": "Date of appointment schedule",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ParticipantsSchema"
+              }
+            ]
+          },
+          "total_appointment_time": {
+            "type": "number",
+            "description": "Total time of appointment in seconds"
+          },
+          "recording_time": {
+            "type": "number",
+            "description": "Total time of appointment recordings in seconds"
+          },
+          "value_charged": {
+            "type": "number",
+            "description": "Value charged in cents"
+          },
+          "value_discount": {
+            "type": "number",
+            "description": "Value of discount in cents"
+          },
+          "value_paid": {
+            "type": "number",
+            "description": "Value paid in cents"
+          },
+          "payment_date_time": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of payment"
+          },
+          "payment_method": {
+            "type": "string",
+            "description": "Payment method",
+            "enum": [
+              "BOLETO",
+              "CREDIT_CARD"
+            ]
+          },
+          "voucher": {
+            "type": "string",
+            "description": "Id of voucher used"
+          }
+        },
+        "required": [
+          "status_appointment",
+          "start_date_time",
+          "date_start_attendance",
+          "participants",
+          "total_appointment_time",
+          "recording_time",
+          "value_charged",
+          "value_discount",
+          "value_paid",
+          "payment_date_time",
+          "voucher"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ]
+}

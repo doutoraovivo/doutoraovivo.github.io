@@ -1,0 +1,827 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/person/{id}/diagnostic": {
+      "post": {
+        "operationId": "CreateController_create",
+        "summary": "Cria um objeto DIAGNOSTIC",
+        "description": "\n    O que é DIAGNOSTIC?:\n      * DIAGNOSTIC representa o resultado de um exame que pertence ao paciente (person)\n      * O BODY da requisição precisa ter no máximo 6MB de tamanho\n\n    Campo opcional caso deseje enviar arquivos:\n      * result_file: \n          base_64: arquivo no formato base64 com tamanho máximo de 5MB\n          mime_type: tipo do arquivo. EX: image/jpeg, image/png, application/pdf\n    ",
+        "parameters": [{
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "$ref": "#/components/schemas/DiagnosticCreateRequestSchema"
+              },
+              "examples": {
+                "requiredOnly": {
+                  "description": "Somente campos obrigatórios. Note que o campo ID segue a regra descrita acima.",
+                  "summary": "Somente campos obrigatórios",
+                  "value": {
+                    "remetent": "Laboratório X",
+                    "examination_name": "Hemograma",
+                    "examination_date": "2021-08-31T12:24:30.295Z",
+                    "result_description": "Resultado negativo"
+                  }
+                },
+                "full": {
+                  "summary": "Todos os campos",
+                  "description": "Exemplo com todos os campos possíveis",
+                  "value": {
+                    "remetent": "Laboratório X",
+                    "examination_name": "Hemograma",
+                    "examination_date": "2021-08-31T12:24:30.295Z",
+                    "result_description": "Resultado negativo",
+                    "result_file": {
+                      "base_64": "9j4AAQSkZJRgABAQEASABIAAD/4QcdRXhpZgAASUkqAAgAAAALAAABBAABAAAAcAgAABABAgAUAAAAkgAAAAEBBAABAAAAQAsAADIBAgAUAAAApgAAABIBAwABAAAAAQAAABMCAwABAAAAAQAAAGmHBAABAAAA0wAAACgBAwABAAAAAgAAABoBBQABAAAAugAAABsBBQABAAAAwgAAAA8BAgAJAAAAygAAAOsGAABtb3Rvcm9sYSBvbmUgdmlzaW9uADIwMjE6MDI6MjUgMTY6MjE6MzQASAAAAAEAAABIAAAAAQAAAG1vdG9yb2xhACQAfJIHALgDAACJAgAAJ4gDAAEAAADdAAAAIogDAAEAAAACAAAAnYIFAAEAAABBBgAAmoIFAAEAAABJBgAAkpICAAUAAABRBgAAkZICAAUAAABWBgAAkJICA",
+                      "mime_type": "image/png"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Person successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiagnosticCreateRequestSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation Error (field type)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error (logic)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["create"],
+        "security": [{
+          "ApiKeyAuth": []
+        }]
+      }
+    },
+    "/person/{id}/diagnostic/{diagnostic_id}": {
+      "delete": {
+        "operationId": "DeleteController_delete",
+        "summary": "Exclui um objeto DIAGNOSTIC",
+        "description": "\n    O que é DIAGNOSTIC?:\n      * DIAGNOSTIC representa o resultado de um exame que pertence ao paciente (person)\n    ",
+        "parameters": [{
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "description": "O id de person",
+          "schema": {
+            "type": "string"
+          }
+        }, {
+          "name": "diagnostic_id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": ["delete"],
+        "security": [{
+          "ApiKeyAuth": []
+        }]
+      }
+    },
+    "/person": {
+      "post": {
+        "operationId": "CreateController_create",
+        "summary": "Cria um objeto PERSON",
+        "description": "\n        O que é PERSON?:\n        * PERSON representa seu cliente (paciente) no em um atendimento\n        * PERSON pode ser independente ou ter um responsável legal, basta colocar o ID do PERSON responsável no campo parent_ID\n        * Caso o parent_ID seja enviado, o email torna-se opcional\n        * O ID de PERSON pode ser informado, caso você integrador queira usar o mesmo ID que já usa em seu sistema, simplificando a integração\n        * Se não informar o ID, será gerado um em formato UUID, e deverá ser utilizado para um novo agendamento.\n\n        Campos opcionais que precisam ser informados (e ser únicos na base) caso:\n        * email: caso o cliente precise receber emails\n        * cell_phone: caso o cliente precise receber SMS ou Whatsapp\n    ",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "$ref": "#/components/schemas/PersonCreateRequestSchema"
+              },
+              "examples": {
+                "requiredOnly": {
+                  "description": "Somente campos obrigatórios. Note que o campo ID segue a regra descrita acima.",
+                  "summary": "Somente campos obrigatórios",
+                  "value": {
+                    "id": "123456",
+                    "name": "Roberval Juvencio Lazaroti",
+                    "birth_date": "1976-01-23",
+                    "email": "roberval@lazaroti.com.br"
+                  }
+                },
+                "full": {
+                  "summary": "Todos os campos",
+                  "description": "Exemplo com todos os campos possíveis",
+                  "value": {
+                    "id": "123456",
+                    "name": "Roberval Juvencio Lazaroti",
+                    "birth_date": "1976-01-23",
+                    "email": "roberval@lazaroti.com.br",
+                    "cpf": "94819089846",
+                    "gender": "M",
+                    "cell_phone": "11912345678",
+                    "cell_phone_ddi": "+55",
+                    "phone": "1112345678",
+                    "phone_ddi": "+55",
+                    "profession": "Agricultor",
+                    "registration": "2312312",
+                    "address": {
+                      "country": "Brasil",
+                      "state": "SP",
+                      "city": 3505708,
+                      "number": "238",
+                      "neighborhood": "Dezoito do Forte",
+                      "complement": "4o andar",
+                      "street": "Avenida Copacabana",
+                      "zip_code": "06472000"
+                    },
+                    "timezone": "America/Sao_Paulo",
+                    "parent_id": "PARENT_USER_ID",
+                    "parent_access_clinical_data": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Person successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonCreateResponseSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation Error (field type)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error (logic)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["create"],
+        "security": [{
+          "ApiKeyAuth": []
+        }]
+      }
+    },
+    "/person/{id}": {
+      "get": {
+        "operationId": "ReadController_get",
+        "summary": "Pesquisa um objeto PERSON",
+        "description": "* PERSON representa seu cliente (paciente) no em um atendimento.\n",
+        "parameters": [{
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "Person",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonReadResponseSchema"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Person not found"
+          }
+        },
+        "tags": ["read"],
+        "security": [{
+          "ApiKeyAuth": []
+        }]
+      },
+      "put": {
+        "operationId": "UpdateController_update",
+        "summary": "Substitui os dados do PERSON pelo que for enviado no corpo da requisição",
+        "description": "\nO que é PERSON?:\n* PERSON representa seu cliente (paciente) no em um atendimento\n* PERSON pode ser independente ou ter um responsável legal, basta colocar o ID do PERSON responsável no campo parent_ID\n\nCampos opcionais que precisam ser informados caso:\n* email: caso o cliente precise receber emails\n* cell_phone: caso o cliente precise receber SMS ou Whatsapp\n    ",
+        "parameters": [{
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "description": "O id de person",
+          "schema": {
+            "type": "string"
+          }
+        }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonUpdateRequestSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonUpdateResponseSchema"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation Error (field type)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error (logic)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DavHttpExceptionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["update"],
+        "security": [{
+          "ApiKeyAuth": []
+        }]
+      },
+      "delete": {
+        "operationId": "DeleteController_delete",
+        "summary": "Exclui um objeto PERSON",
+        "description": "\n* PERSON representa seu cliente (paciente) no em um atendimento.\n* O ID de Person não pode ser reaproveitado. Sua exclusão é LOGICA, ou seja, o registro permanece por histórico das consultas já efetuadas.\n    ",
+        "parameters": [{
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "description": "O id de person",
+          "schema": {
+            "type": "string"
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": ["delete"],
+        "security": [{
+          "ApiKeyAuth": []
+        }]
+      }
+    },
+    "/person/cpf/{cpf}": {
+      "get": {
+        "operationId": "ReadController_getByCpf",
+        "summary": "Pesquisa um objeto PERSON",
+        "description": "* PERSON representa seu cliente (paciente) no em um atendimento.\n",
+        "parameters": [{
+          "name": "cpf",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "Person",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonReadResponseSchema"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Person not found"
+          }
+        },
+        "tags": ["read"],
+        "security": [{
+          "ApiKeyAuth": []
+        }]
+      }
+    }
+  },
+  "info": {
+    "title": "Person",
+    "description": "Criação e manutenção de clientes (pacientes/atendidos/assistidos)",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [{
+    "url": "https://api.v2.doutoraovivo.com.br",
+    "description": "ambiente de PRODUÇÃO"
+  }, {
+    "url": "https://api.v2.hom.doutoraovivo.com.br",
+    "description": "ambiente de HOMOLOGAÇÃO"
+  }],
+  "components": {
+    "schemas": {
+      "ResultFileSchema": {
+        "type": "object",
+        "properties": {
+          "mime_type": {
+            "type": "string",
+            "description": "File format (MIME type)",
+            "enum": ["application/epub+zip", "application/gzip", "application/json", "application/ld+json", "application/msword", "application/octet-stream", "application/ogg", "application/pdf", "application/rtf", "application/vnd.amazon.ebook", "application/vnd.apple.installer+xml", "application/vnd.mozilla.xul+xml", "application/vnd.ms-excel", "application/vnd.ms-fontobject", "application/vnd.ms-powerpoint", "application/vnd.oasis.opendocument.presentation", "application/vnd.oasis.opendocument.spreadsheet", "application/vnd.oasis.opendocument.text", "application/vnd.openxmlformats-officedocument.presentationml.presentation", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.rar", "application/vnd.visio", "application/x-7z-compressed", "application/x-abiword", "application/x-bzip", "application/x-bzip2", "application/x-csh", "application/x-freearc", "application/x-httpd-php", "application/x-sh", "application/x-shockwave-flash", "application/x-tar", "application/xhtml+xml", "application/xml", "application/zip", "audio/3gpp", "audio/3gpp2", "audio/aac", "audio/midi audio/x-midi", "audio/mpeg", "audio/ogg", "audio/opus", "audio/wav", "audio/webm", "font/otf", "font/ttf", "font/woff", "font/woff2", "image/bmp", "image/gif", "image/jpeg", "image/png", "image/svg+xml", "image/tiff", "image/vnd.microsoft.icon", "image/webp", "text/calendar", "text/css", "text/csv", "text/html", "text/javascript", "text/plain", "text/xml", "video/3gpp", "video/3gpp2", "video/mp2t", "video/mpeg", "video/ogg", "video/webm", "video/x-msvideo"]
+          },
+          "base_64": {
+            "type": "string",
+            "format": "byte",
+            "description": "Examination result file base64"
+          }
+        },
+        "required": ["mime_type", "base_64"]
+      },
+      "DiagnosticCreateRequestSchema": {
+        "type": "object",
+        "properties": {
+          "remetent": {
+            "type": "string",
+            "description": "Lab that has made the examination"
+          },
+          "examination_name": {
+            "type": "string",
+            "description": "Examination name"
+          },
+          "examination_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Examination Date"
+          },
+          "result_description": {
+            "type": "string",
+            "description": "Examination result description"
+          },
+          "result_file": {
+            "description": "Endereço",
+            "additionalProperties": false,
+            "allOf": [{
+              "$ref": "#/components/schemas/ResultFileSchema"
+            }]
+          }
+        },
+        "required": ["remetent", "examination_name", "examination_date", "result_description"]
+      },
+      "i18nMessageConfig": {
+        "type": "object",
+        "properties": {}
+      },
+      "DavHttpExceptionDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "description": "HTTP Response Code"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error Message"
+          },
+          "i18n": {
+            "description": "For use with Frontend only",
+            "allOf": [{
+              "$ref": "#/components/schemas/i18nMessageConfig"
+            }]
+          },
+          "detail": {
+            "description": "Individual Messages",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "trace": {
+            "type": "string",
+            "description": "Trace ID - pass it to DaV support"
+          }
+        },
+        "required": ["code", "message", "trace"]
+      },
+      "AddressSchema": {
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string",
+            "description": "País",
+            "example": "Brasil"
+          },
+          "zip_code": {
+            "type": "string",
+            "description": "CEP (Codigo de Enderecamento Postal)",
+            "example": "06010210"
+          },
+          "street": {
+            "type": "string",
+            "description": "Logradouro",
+            "example": "Avenida Copacabana"
+          },
+          "number": {
+            "type": "string",
+            "description": "Número do recinto",
+            "example": "238"
+          },
+          "complement": {
+            "type": "string",
+            "description": "Complemento do Endereço",
+            "example": "4o andar"
+          },
+          "neighborhood": {
+            "type": "string",
+            "description": "Bairro",
+            "example": "Dezoito do Forte"
+          },
+          "city": {
+            "type": "object",
+            "description": "Código do município do IBGE (https://www.ibge.gov.br/explica/codigos-dos-municipios.php) ou Nome do Município",
+            "example": 3505708
+          },
+          "state": {
+            "type": "string",
+            "description": "Estado (UF)",
+            "example": "SP"
+          }
+        },
+        "required": ["country", "zip_code", "street", "number", "neighborhood", "city", "state"]
+      },
+      "PersonCreateRequestSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator",
+            "pattern": "^[^\\s]+$"
+          },
+          "parent_id": {
+            "type": "string",
+            "description": "Id of this person legal responsible"
+          },
+          "parent_access_clinical_data": {
+            "type": "boolean",
+            "description": "Share clinical data with parent user\n     \n* In case of no parent_id given, this field will be ignored\n     \n* When person has not an email, it's forced to true,\n     \n* Otherwhise it's assumed false when no value is given"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "CPF",
+            "example": "94819089846",
+            "pattern": "^\\d{3}\\d{3}\\d{3}\\d{2}$"
+          },
+          "registration": {
+            "type": "string",
+            "description": "Special Field like registration ID or social service ID"
+          },
+          "birth_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Birth Date"
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender",
+            "enum": ["F", "M"]
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "1112345678",
+            "pattern": "^\\d+$"
+          },
+          "phone_ddi": {
+            "type": "string",
+            "description": "Phone international code (DDI). When not given it's assumed +55 (Brazil)",
+            "example": "+55",
+            "pattern": "^\\+\\d+$",
+            "enum": ["+1", "+1242", "+1246", "+1264", "+1268", "+1284", "+1340", "+1441", "+1473", "+1649", "+1664", "+1670", "+1671", "+1684", "+1758", "+1767", "+1784", "+1849", "+1868", "+1869", "+1876", "+1939", "+20", "+211", "+212", "+213", "+216", "+218", "+220", "+221", "+222", "+223", "+224", "+225", "+226", "+227", "+228", "+229", "+230", "+231", "+232", "+233", "+234", "+235", "+236", "+237", "+238", "+239", "+240", "+241", "+242", "+243", "+244", "+245", "+246", "+248", "+249", "+250", "+251", "+252", "+253", "+254", "+255", "+256", "+257", "+258", "+260", "+261", "+262", "+263", "+264", "+265", "+266", "+267", "+268", "+269", "+27", "+290", "+291", "+297", "+298", "+299", "+30", "+31", "+32", "+33", "+34", "+345", "+350", "+351", "+352", "+353", "+354", "+355", "+356", "+357", "+358", "+359", "+36", "+370", "+371", "+372", "+373", "+374", "+375", "+376", "+377", "+378", "+379", "+380", "+381", "+382", "+385", "+386", "+387", "+389", "+39", "+40", "+41", "+420", "+421", "+423", "+43", "+44", "+45", "+46", "+47", "+48", "+49", "+500", "+501", "+502", "+503", "+504", "+505", "+506", "+507", "+508", "+509", "+51", "+52", "+53", "+54", "+55", "+56", "+57", "+58", "+590", "+591", "+593", "+594", "+595", "+596", "+597", "+598", "+599", "+60", "+61", "+62", "+63", "+64", "+65", "+66", "+670", "+672", "+673", "+674", "+675", "+676", "+677", "+678", "+679", "+680", "+681", "+682", "+683", "+685", "+686", "+687", "+688", "+689", "+690", "+691", "+692", "+7", "+77", "+81", "+82", "+84", "+850", "+852", "+853", "+855", "+856", "+86", "+872", "+880", "+886", "+90", "+91", "+92", "+93", "+94", "+95", "+960", "+961", "+962", "+963", "+964", "+965", "+966", "+967", "+968", "+970", "+971", "+972", "+973", "+974", "+975", "+976", "+977", "+98", "+992", "+993", "+994", "+995", "+996", "+998"]
+          },
+          "cell_phone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "11912345678",
+            "pattern": "^\\d+$"
+          },
+          "cell_phone_ddi": {
+            "type": "string",
+            "description": "Cellphone international code (DDI). When not given it's assumed +55 (Brazil)",
+            "example": "+55",
+            "pattern": "^\\+\\d+$",
+            "enum": ["+1", "+1242", "+1246", "+1264", "+1268", "+1284", "+1340", "+1441", "+1473", "+1649", "+1664", "+1670", "+1671", "+1684", "+1758", "+1767", "+1784", "+1849", "+1868", "+1869", "+1876", "+1939", "+20", "+211", "+212", "+213", "+216", "+218", "+220", "+221", "+222", "+223", "+224", "+225", "+226", "+227", "+228", "+229", "+230", "+231", "+232", "+233", "+234", "+235", "+236", "+237", "+238", "+239", "+240", "+241", "+242", "+243", "+244", "+245", "+246", "+248", "+249", "+250", "+251", "+252", "+253", "+254", "+255", "+256", "+257", "+258", "+260", "+261", "+262", "+263", "+264", "+265", "+266", "+267", "+268", "+269", "+27", "+290", "+291", "+297", "+298", "+299", "+30", "+31", "+32", "+33", "+34", "+345", "+350", "+351", "+352", "+353", "+354", "+355", "+356", "+357", "+358", "+359", "+36", "+370", "+371", "+372", "+373", "+374", "+375", "+376", "+377", "+378", "+379", "+380", "+381", "+382", "+385", "+386", "+387", "+389", "+39", "+40", "+41", "+420", "+421", "+423", "+43", "+44", "+45", "+46", "+47", "+48", "+49", "+500", "+501", "+502", "+503", "+504", "+505", "+506", "+507", "+508", "+509", "+51", "+52", "+53", "+54", "+55", "+56", "+57", "+58", "+590", "+591", "+593", "+594", "+595", "+596", "+597", "+598", "+599", "+60", "+61", "+62", "+63", "+64", "+65", "+66", "+670", "+672", "+673", "+674", "+675", "+676", "+677", "+678", "+679", "+680", "+681", "+682", "+683", "+685", "+686", "+687", "+688", "+689", "+690", "+691", "+692", "+7", "+77", "+81", "+82", "+84", "+850", "+852", "+853", "+855", "+856", "+86", "+872", "+880", "+886", "+90", "+91", "+92", "+93", "+94", "+95", "+960", "+961", "+962", "+963", "+964", "+965", "+966", "+967", "+968", "+970", "+971", "+972", "+973", "+974", "+975", "+976", "+977", "+98", "+992", "+993", "+994", "+995", "+996", "+998"]
+          },
+          "profession": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "Accountant"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "person@example.dav.med.br"
+          },
+          "address": {
+            "description": "Endereço",
+            "additionalProperties": false,
+            "allOf": [{
+              "$ref": "#/components/schemas/AddressSchema"
+            }]
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Timezone of new user",
+            "enum": ["Africa/Abidjan", "Africa/Accra", "Africa/Addis_Ababa", "Africa/Algiers", "Africa/Asmara", "Africa/Asmera", "Africa/Bamako", "Africa/Bangui", "Africa/Banjul", "Africa/Bissau", "Africa/Blantyre", "Africa/Brazzaville", "Africa/Bujumbura", "Africa/Cairo", "Africa/Casablanca", "Africa/Ceuta", "Africa/Conakry", "Africa/Dakar", "Africa/Dar_es_Salaam", "Africa/Djibouti", "Africa/Douala", "Africa/El_Aaiun", "Africa/Freetown", "Africa/Gaborone", "Africa/Harare", "Africa/Johannesburg", "Africa/Juba", "Africa/Kampala", "Africa/Khartoum", "Africa/Kigali", "Africa/Kinshasa", "Africa/Lagos", "Africa/Libreville", "Africa/Lome", "Africa/Luanda", "Africa/Lubumbashi", "Africa/Lusaka", "Africa/Malabo", "Africa/Maputo", "Africa/Maseru", "Africa/Mbabane", "Africa/Mogadishu", "Africa/Monrovia", "Africa/Nairobi", "Africa/Ndjamena", "Africa/Niamey", "Africa/Nouakchott", "Africa/Ouagadougou", "Africa/Porto-Novo", "Africa/Sao_Tome", "Africa/Timbuktu", "Africa/Tripoli", "Africa/Tunis", "Africa/Windhoek", "America/Adak", "America/Anchorage", "America/Anguilla", "America/Antigua", "America/Araguaina", "America/Argentina/Buenos_Aires", "America/Argentina/Catamarca", "America/Argentina/ComodRivadavia", "America/Argentina/Cordoba", "America/Argentina/Jujuy", "America/Argentina/La_Rioja", "America/Argentina/Mendoza", "America/Argentina/Rio_Gallegos", "America/Argentina/Salta", "America/Argentina/San_Juan", "America/Argentina/San_Luis", "America/Argentina/Tucuman", "America/Argentina/Ushuaia", "America/Aruba", "America/Asuncion", "America/Atikokan", "America/Atka", "America/Bahia", "America/Bahia_Banderas", "America/Barbados", "America/Belem", "America/Belize", "America/Blanc-Sablon", "America/Boa_Vista", "America/Bogota", "America/Boise", "America/Buenos_Aires", "America/Cambridge_Bay", "America/Campo_Grande", "America/Cancun", "America/Caracas", "America/Catamarca", "America/Cayenne", "America/Cayman", "America/Chicago", "America/Chihuahua", "America/Coral_Harbour", "America/Cordoba", "America/Costa_Rica", "America/Creston", "America/Cuiaba", "America/Curacao", "America/Danmarkshavn", "America/Dawson", "America/Dawson_Creek", "America/Denver", "America/Detroit", "America/Dominica", "America/Edmonton", "America/Eirunepe", "America/El_Salvador", "America/Ensenada", "America/Fort_Nelson", "America/Fort_Wayne", "America/Fortaleza", "America/Glace_Bay", "America/Godthab", "America/Goose_Bay", "America/Grand_Turk", "America/Grenada", "America/Guadeloupe", "America/Guatemala", "America/Guayaquil", "America/Guyana", "America/Halifax", "America/Havana", "America/Hermosillo", "America/Indiana/Indianapolis", "America/Indiana/Knox", "America/Indiana/Marengo", "America/Indiana/Petersburg", "America/Indiana/Tell_City", "America/Indiana/Vevay", "America/Indiana/Vincennes", "America/Indiana/Winamac", "America/Indianapolis", "America/Inuvik", "America/Iqaluit", "America/Jamaica", "America/Jujuy", "America/Juneau", "America/Kentucky/Louisville", "America/Kentucky/Monticello", "America/Knox_IN", "America/Kralendijk", "America/La_Paz", "America/Lima", "America/Los_Angeles", "America/Louisville", "America/Lower_Princes", "America/Maceio", "America/Managua", "America/Manaus", "America/Marigot", "America/Martinique", "America/Matamoros", "America/Mazatlan", "America/Mendoza", "America/Menominee", "America/Merida", "America/Metlakatla", "America/Mexico_City", "America/Miquelon", "America/Moncton", "America/Monterrey", "America/Montevideo", "America/Montreal", "America/Montserrat", "America/Nassau", "America/New_York", "America/Nipigon", "America/Nome", "America/Noronha", "America/North_Dakota/Beulah", "America/North_Dakota/Center", "America/North_Dakota/New_Salem", "America/Ojinaga", "America/Panama", "America/Pangnirtung", "America/Paramaribo", "America/Phoenix", "America/Port-au-Prince", "America/Port_of_Spain", "America/Porto_Acre", "America/Porto_Velho", "America/Puerto_Rico", "America/Punta_Arenas", "America/Rainy_River", "America/Rankin_Inlet", "America/Recife", "America/Regina", "America/Resolute", "America/Rio_Branco", "America/Rosario", "America/Santa_Isabel", "America/Santarem", "America/Santiago", "America/Santo_Domingo", "America/Sao_Paulo", "America/Scoresbysund", "America/Shiprock", "America/Sitka", "America/St_Barthelemy", "America/St_Johns", "America/St_Kitts", "America/St_Lucia", "America/St_Thomas", "America/St_Vincent", "America/Swift_Current", "America/Tegucigalpa", "America/Thule", "America/Thunder_Bay", "America/Tijuana", "America/Toronto", "America/Tortola", "America/Vancouver", "America/Virgin", "America/Whitehorse", "America/Winnipeg", "America/Yakutat", "America/Yellowknife", "Antarctica/Casey", "Antarctica/Davis", "Antarctica/DumontDUrville", "Antarctica/Macquarie", "Antarctica/Mawson", "Antarctica/McMurdo", "Antarctica/Palmer", "Antarctica/Rothera", "Antarctica/South_Pole", "Antarctica/Syowa", "Antarctica/Troll", "Antarctica/Vostok", "Arctic/Longyearbyen", "Asia/Aden", "Asia/Almaty", "Asia/Amman", "Asia/Anadyr", "Asia/Aqtau", "Asia/Aqtobe", "Asia/Ashgabat", "Asia/Ashkhabad", "Asia/Atyrau", "Asia/Baghdad", "Asia/Bahrain", "Asia/Baku", "Asia/Bangkok", "Asia/Barnaul", "Asia/Beirut", "Asia/Bishkek", "Asia/Brunei", "Asia/Calcutta", "Asia/Chita", "Asia/Choibalsan", "Asia/Chongqing", "Asia/Chungking", "Asia/Colombo", "Asia/Dacca", "Asia/Damascus", "Asia/Dhaka", "Asia/Dili", "Asia/Dubai", "Asia/Dushanbe", "Asia/Famagusta", "Asia/Gaza", "Asia/Harbin", "Asia/Hebron", "Asia/Ho_Chi_Minh", "Asia/Hong_Kong", "Asia/Hovd", "Asia/Irkutsk", "Asia/Istanbul", "Asia/Jakarta", "Asia/Jayapura", "Asia/Jerusalem", "Asia/Kabul", "Asia/Kamchatka", "Asia/Karachi", "Asia/Kashgar", "Asia/Kathmandu", "Asia/Katmandu", "Asia/Khandyga", "Asia/Kolkata", "Asia/Krasnoyarsk", "Asia/Kuala_Lumpur", "Asia/Kuching", "Asia/Kuwait", "Asia/Macao", "Asia/Macau", "Asia/Magadan", "Asia/Makassar", "Asia/Manila", "Asia/Muscat", "Asia/Nicosia", "Asia/Novokuznetsk", "Asia/Novosibirsk", "Asia/Omsk", "Asia/Oral", "Asia/Phnom_Penh", "Asia/Pontianak", "Asia/Pyongyang", "Asia/Qatar", "Asia/Qyzylorda", "Asia/Rangoon", "Asia/Riyadh", "Asia/Saigon", "Asia/Sakhalin", "Asia/Samarkand", "Asia/Seoul", "Asia/Shanghai", "Asia/Singapore", "Asia/Srednekolymsk", "Asia/Taipei", "Asia/Tashkent", "Asia/Tbilisi", "Asia/Tehran", "Asia/Tel_Aviv", "Asia/Thimbu", "Asia/Thimphu", "Asia/Tokyo", "Asia/Tomsk", "Asia/Ujung_Pandang", "Asia/Ulaanbaatar", "Asia/Ulan_Bator", "Asia/Urumqi", "Asia/Ust-Nera", "Asia/Vientiane", "Asia/Vladivostok", "Asia/Yakutsk", "Asia/Yangon", "Asia/Yekaterinburg", "Asia/Yerevan", "Atlantic/Azores", "Atlantic/Bermuda", "Atlantic/Canary", "Atlantic/Cape_Verde", "Atlantic/Faeroe", "Atlantic/Faroe", "Atlantic/Jan_Mayen", "Atlantic/Madeira", "Atlantic/Reykjavik", "Atlantic/South_Georgia", "Atlantic/St_Helena", "Atlantic/Stanley", "Australia/ACT", "Australia/Adelaide", "Australia/Brisbane", "Australia/Broken_Hill", "Australia/Canberra", "Australia/Currie", "Australia/Darwin", "Australia/Eucla", "Australia/Hobart", "Australia/LHI", "Australia/Lindeman", "Australia/Lord_Howe", "Australia/Melbourne", "Australia/NSW", "Australia/North", "Australia/Perth", "Australia/Queensland", "Australia/South", "Australia/Sydney", "Australia/Tasmania", "Australia/Victoria", "Australia/West", "Australia/Yancowinna", "Brazil/Acre", "Brazil/DeNoronha", "Brazil/East", "Brazil/West", "CET", "CST6CDT", "Canada/Atlantic", "Canada/Central", "Canada/Eastern", "Canada/Mountain", "Canada/Newfoundland", "Canada/Pacific", "Canada/Saskatchewan", "Canada/Yukon", "Chile/Continental", "Chile/EasterIsland", "Cuba", "EET", "EST", "EST5EDT", "Egypt", "Eire", "Etc/GMT", "Etc/GMT+0", "Etc/GMT+1", "Etc/GMT+10", "Etc/GMT+11", "Etc/GMT+12", "Etc/GMT+2", "Etc/GMT+3", "Etc/GMT+4", "Etc/GMT+5", "Etc/GMT+6", "Etc/GMT+7", "Etc/GMT+8", "Etc/GMT+9", "Etc/GMT-0", "Etc/GMT-1", "Etc/GMT-10", "Etc/GMT-11", "Etc/GMT-12", "Etc/GMT-13", "Etc/GMT-14", "Etc/GMT-2", "Etc/GMT-3", "Etc/GMT-4", "Etc/GMT-5", "Etc/GMT-6", "Etc/GMT-7", "Etc/GMT-8", "Etc/GMT-9", "Etc/GMT0", "Etc/Greenwich", "Etc/UCT", "Etc/UTC", "Etc/Universal", "Etc/Zulu", "Europe/Amsterdam", "Europe/Andorra", "Europe/Astrakhan", "Europe/Athens", "Europe/Belfast", "Europe/Belgrade", "Europe/Berlin", "Europe/Bratislava", "Europe/Brussels", "Europe/Bucharest", "Europe/Budapest", "Europe/Busingen", "Europe/Chisinau", "Europe/Copenhagen", "Europe/Dublin", "Europe/Gibraltar", "Europe/Guernsey", "Europe/Helsinki", "Europe/Isle_of_Man", "Europe/Istanbul", "Europe/Jersey", "Europe/Kaliningrad", "Europe/Kiev", "Europe/Kirov", "Europe/Lisbon", "Europe/Ljubljana", "Europe/London", "Europe/Luxembourg", "Europe/Madrid", "Europe/Malta", "Europe/Mariehamn", "Europe/Minsk", "Europe/Monaco", "Europe/Moscow", "Europe/Nicosia", "Europe/Oslo", "Europe/Paris", "Europe/Podgorica", "Europe/Prague", "Europe/Riga", "Europe/Rome", "Europe/Samara", "Europe/San_Marino", "Europe/Sarajevo", "Europe/Saratov", "Europe/Simferopol", "Europe/Skopje", "Europe/Sofia", "Europe/Stockholm", "Europe/Tallinn", "Europe/Tirane", "Europe/Tiraspol", "Europe/Ulyanovsk", "Europe/Uzhgorod", "Europe/Vaduz", "Europe/Vatican", "Europe/Vienna", "Europe/Vilnius", "Europe/Volgograd", "Europe/Warsaw", "Europe/Zagreb", "Europe/Zaporozhye", "Europe/Zurich", "GB", "GB-Eire", "GMT", "GMT+0", "GMT-0", "GMT0", "Greenwich", "HST", "Hongkong", "Iceland", "Indian/Antananarivo", "Indian/Chagos", "Indian/Christmas", "Indian/Cocos", "Indian/Comoro", "Indian/Kerguelen", "Indian/Mahe", "Indian/Maldives", "Indian/Mauritius", "Indian/Mayotte", "Indian/Reunion", "Iran", "Israel", "Jamaica", "Japan", "Kwajalein", "Libya", "MET", "MST", "MST7MDT", "Mexico/BajaNorte", "Mexico/BajaSur", "Mexico/General", "NZ", "NZ-CHAT", "Navajo", "PRC", "PST8PDT", "Pacific/Apia", "Pacific/Auckland", "Pacific/Bougainville", "Pacific/Chatham", "Pacific/Chuuk", "Pacific/Easter", "Pacific/Efate", "Pacific/Enderbury", "Pacific/Fakaofo", "Pacific/Fiji", "Pacific/Funafuti", "Pacific/Galapagos", "Pacific/Gambier", "Pacific/Guadalcanal", "Pacific/Guam", "Pacific/Honolulu", "Pacific/Johnston", "Pacific/Kiritimati", "Pacific/Kosrae", "Pacific/Kwajalein", "Pacific/Majuro", "Pacific/Marquesas", "Pacific/Midway", "Pacific/Nauru", "Pacific/Niue", "Pacific/Norfolk", "Pacific/Noumea", "Pacific/Pago_Pago", "Pacific/Palau", "Pacific/Pitcairn", "Pacific/Pohnpei", "Pacific/Ponape", "Pacific/Port_Moresby", "Pacific/Rarotonga", "Pacific/Saipan", "Pacific/Samoa", "Pacific/Tahiti", "Pacific/Tarawa", "Pacific/Tongatapu", "Pacific/Truk", "Pacific/Wake", "Pacific/Wallis", "Pacific/Yap", "Poland", "Portugal", "ROC", "ROK", "Singapore", "Turkey", "UCT", "US/Alaska", "US/Aleutian", "US/Arizona", "US/Central", "US/East-Indiana", "US/Eastern", "US/Hawaii", "US/Indiana-Starke", "US/Michigan", "US/Mountain", "US/Pacific", "US/Pacific-New", "US/Samoa", "UTC", "Universal", "W-SU", "WET", "Zulu"]
+          }
+        },
+        "required": ["name", "birth_date"]
+      },
+      "PersonCreateResponseSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator",
+            "pattern": "^[^\\s]+$"
+          }
+        }
+      },
+      "PersonReadResponseSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator",
+            "pattern": "^[^\\s]+$"
+          },
+          "parent_id": {
+            "type": "string",
+            "description": "Id of this person legal responsible"
+          },
+          "parent_access_clinical_data": {
+            "type": "boolean",
+            "description": "Share clinical data with parent user\n     \n* In case of no parent_id given, this field will be ignored\n     \n* When person has not an email, it's forced to true,\n     \n* Otherwhise it's assumed false when no value is given"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "CPF",
+            "example": "94819089846",
+            "pattern": "^\\d{3}\\d{3}\\d{3}\\d{2}$"
+          },
+          "registration": {
+            "type": "string",
+            "description": "Special Field like registration ID or social service ID"
+          },
+          "birth_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Birth Date"
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender",
+            "enum": ["F", "M"]
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "1112345678",
+            "pattern": "^\\d+$"
+          },
+          "phone_ddi": {
+            "type": "string",
+            "description": "Phone international code (DDI). When not given it's assumed +55 (Brazil)",
+            "example": "+55",
+            "pattern": "^\\+\\d+$",
+            "enum": ["+1", "+1242", "+1246", "+1264", "+1268", "+1284", "+1340", "+1441", "+1473", "+1649", "+1664", "+1670", "+1671", "+1684", "+1758", "+1767", "+1784", "+1849", "+1868", "+1869", "+1876", "+1939", "+20", "+211", "+212", "+213", "+216", "+218", "+220", "+221", "+222", "+223", "+224", "+225", "+226", "+227", "+228", "+229", "+230", "+231", "+232", "+233", "+234", "+235", "+236", "+237", "+238", "+239", "+240", "+241", "+242", "+243", "+244", "+245", "+246", "+248", "+249", "+250", "+251", "+252", "+253", "+254", "+255", "+256", "+257", "+258", "+260", "+261", "+262", "+263", "+264", "+265", "+266", "+267", "+268", "+269", "+27", "+290", "+291", "+297", "+298", "+299", "+30", "+31", "+32", "+33", "+34", "+345", "+350", "+351", "+352", "+353", "+354", "+355", "+356", "+357", "+358", "+359", "+36", "+370", "+371", "+372", "+373", "+374", "+375", "+376", "+377", "+378", "+379", "+380", "+381", "+382", "+385", "+386", "+387", "+389", "+39", "+40", "+41", "+420", "+421", "+423", "+43", "+44", "+45", "+46", "+47", "+48", "+49", "+500", "+501", "+502", "+503", "+504", "+505", "+506", "+507", "+508", "+509", "+51", "+52", "+53", "+54", "+55", "+56", "+57", "+58", "+590", "+591", "+593", "+594", "+595", "+596", "+597", "+598", "+599", "+60", "+61", "+62", "+63", "+64", "+65", "+66", "+670", "+672", "+673", "+674", "+675", "+676", "+677", "+678", "+679", "+680", "+681", "+682", "+683", "+685", "+686", "+687", "+688", "+689", "+690", "+691", "+692", "+7", "+77", "+81", "+82", "+84", "+850", "+852", "+853", "+855", "+856", "+86", "+872", "+880", "+886", "+90", "+91", "+92", "+93", "+94", "+95", "+960", "+961", "+962", "+963", "+964", "+965", "+966", "+967", "+968", "+970", "+971", "+972", "+973", "+974", "+975", "+976", "+977", "+98", "+992", "+993", "+994", "+995", "+996", "+998"]
+          },
+          "cell_phone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "11912345678",
+            "pattern": "^\\d+$"
+          },
+          "cell_phone_ddi": {
+            "type": "string",
+            "description": "Cellphone international code (DDI). When not given it's assumed +55 (Brazil)",
+            "example": "+55",
+            "pattern": "^\\+\\d+$",
+            "enum": ["+1", "+1242", "+1246", "+1264", "+1268", "+1284", "+1340", "+1441", "+1473", "+1649", "+1664", "+1670", "+1671", "+1684", "+1758", "+1767", "+1784", "+1849", "+1868", "+1869", "+1876", "+1939", "+20", "+211", "+212", "+213", "+216", "+218", "+220", "+221", "+222", "+223", "+224", "+225", "+226", "+227", "+228", "+229", "+230", "+231", "+232", "+233", "+234", "+235", "+236", "+237", "+238", "+239", "+240", "+241", "+242", "+243", "+244", "+245", "+246", "+248", "+249", "+250", "+251", "+252", "+253", "+254", "+255", "+256", "+257", "+258", "+260", "+261", "+262", "+263", "+264", "+265", "+266", "+267", "+268", "+269", "+27", "+290", "+291", "+297", "+298", "+299", "+30", "+31", "+32", "+33", "+34", "+345", "+350", "+351", "+352", "+353", "+354", "+355", "+356", "+357", "+358", "+359", "+36", "+370", "+371", "+372", "+373", "+374", "+375", "+376", "+377", "+378", "+379", "+380", "+381", "+382", "+385", "+386", "+387", "+389", "+39", "+40", "+41", "+420", "+421", "+423", "+43", "+44", "+45", "+46", "+47", "+48", "+49", "+500", "+501", "+502", "+503", "+504", "+505", "+506", "+507", "+508", "+509", "+51", "+52", "+53", "+54", "+55", "+56", "+57", "+58", "+590", "+591", "+593", "+594", "+595", "+596", "+597", "+598", "+599", "+60", "+61", "+62", "+63", "+64", "+65", "+66", "+670", "+672", "+673", "+674", "+675", "+676", "+677", "+678", "+679", "+680", "+681", "+682", "+683", "+685", "+686", "+687", "+688", "+689", "+690", "+691", "+692", "+7", "+77", "+81", "+82", "+84", "+850", "+852", "+853", "+855", "+856", "+86", "+872", "+880", "+886", "+90", "+91", "+92", "+93", "+94", "+95", "+960", "+961", "+962", "+963", "+964", "+965", "+966", "+967", "+968", "+970", "+971", "+972", "+973", "+974", "+975", "+976", "+977", "+98", "+992", "+993", "+994", "+995", "+996", "+998"]
+          },
+          "profession": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "Accountant"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "person@example.dav.med.br"
+          },
+          "address": {
+            "description": "Endereço",
+            "additionalProperties": false,
+            "allOf": [{
+              "$ref": "#/components/schemas/AddressSchema"
+            }]
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Timezone of new user",
+            "enum": ["Africa/Abidjan", "Africa/Accra", "Africa/Addis_Ababa", "Africa/Algiers", "Africa/Asmara", "Africa/Asmera", "Africa/Bamako", "Africa/Bangui", "Africa/Banjul", "Africa/Bissau", "Africa/Blantyre", "Africa/Brazzaville", "Africa/Bujumbura", "Africa/Cairo", "Africa/Casablanca", "Africa/Ceuta", "Africa/Conakry", "Africa/Dakar", "Africa/Dar_es_Salaam", "Africa/Djibouti", "Africa/Douala", "Africa/El_Aaiun", "Africa/Freetown", "Africa/Gaborone", "Africa/Harare", "Africa/Johannesburg", "Africa/Juba", "Africa/Kampala", "Africa/Khartoum", "Africa/Kigali", "Africa/Kinshasa", "Africa/Lagos", "Africa/Libreville", "Africa/Lome", "Africa/Luanda", "Africa/Lubumbashi", "Africa/Lusaka", "Africa/Malabo", "Africa/Maputo", "Africa/Maseru", "Africa/Mbabane", "Africa/Mogadishu", "Africa/Monrovia", "Africa/Nairobi", "Africa/Ndjamena", "Africa/Niamey", "Africa/Nouakchott", "Africa/Ouagadougou", "Africa/Porto-Novo", "Africa/Sao_Tome", "Africa/Timbuktu", "Africa/Tripoli", "Africa/Tunis", "Africa/Windhoek", "America/Adak", "America/Anchorage", "America/Anguilla", "America/Antigua", "America/Araguaina", "America/Argentina/Buenos_Aires", "America/Argentina/Catamarca", "America/Argentina/ComodRivadavia", "America/Argentina/Cordoba", "America/Argentina/Jujuy", "America/Argentina/La_Rioja", "America/Argentina/Mendoza", "America/Argentina/Rio_Gallegos", "America/Argentina/Salta", "America/Argentina/San_Juan", "America/Argentina/San_Luis", "America/Argentina/Tucuman", "America/Argentina/Ushuaia", "America/Aruba", "America/Asuncion", "America/Atikokan", "America/Atka", "America/Bahia", "America/Bahia_Banderas", "America/Barbados", "America/Belem", "America/Belize", "America/Blanc-Sablon", "America/Boa_Vista", "America/Bogota", "America/Boise", "America/Buenos_Aires", "America/Cambridge_Bay", "America/Campo_Grande", "America/Cancun", "America/Caracas", "America/Catamarca", "America/Cayenne", "America/Cayman", "America/Chicago", "America/Chihuahua", "America/Coral_Harbour", "America/Cordoba", "America/Costa_Rica", "America/Creston", "America/Cuiaba", "America/Curacao", "America/Danmarkshavn", "America/Dawson", "America/Dawson_Creek", "America/Denver", "America/Detroit", "America/Dominica", "America/Edmonton", "America/Eirunepe", "America/El_Salvador", "America/Ensenada", "America/Fort_Nelson", "America/Fort_Wayne", "America/Fortaleza", "America/Glace_Bay", "America/Godthab", "America/Goose_Bay", "America/Grand_Turk", "America/Grenada", "America/Guadeloupe", "America/Guatemala", "America/Guayaquil", "America/Guyana", "America/Halifax", "America/Havana", "America/Hermosillo", "America/Indiana/Indianapolis", "America/Indiana/Knox", "America/Indiana/Marengo", "America/Indiana/Petersburg", "America/Indiana/Tell_City", "America/Indiana/Vevay", "America/Indiana/Vincennes", "America/Indiana/Winamac", "America/Indianapolis", "America/Inuvik", "America/Iqaluit", "America/Jamaica", "America/Jujuy", "America/Juneau", "America/Kentucky/Louisville", "America/Kentucky/Monticello", "America/Knox_IN", "America/Kralendijk", "America/La_Paz", "America/Lima", "America/Los_Angeles", "America/Louisville", "America/Lower_Princes", "America/Maceio", "America/Managua", "America/Manaus", "America/Marigot", "America/Martinique", "America/Matamoros", "America/Mazatlan", "America/Mendoza", "America/Menominee", "America/Merida", "America/Metlakatla", "America/Mexico_City", "America/Miquelon", "America/Moncton", "America/Monterrey", "America/Montevideo", "America/Montreal", "America/Montserrat", "America/Nassau", "America/New_York", "America/Nipigon", "America/Nome", "America/Noronha", "America/North_Dakota/Beulah", "America/North_Dakota/Center", "America/North_Dakota/New_Salem", "America/Ojinaga", "America/Panama", "America/Pangnirtung", "America/Paramaribo", "America/Phoenix", "America/Port-au-Prince", "America/Port_of_Spain", "America/Porto_Acre", "America/Porto_Velho", "America/Puerto_Rico", "America/Punta_Arenas", "America/Rainy_River", "America/Rankin_Inlet", "America/Recife", "America/Regina", "America/Resolute", "America/Rio_Branco", "America/Rosario", "America/Santa_Isabel", "America/Santarem", "America/Santiago", "America/Santo_Domingo", "America/Sao_Paulo", "America/Scoresbysund", "America/Shiprock", "America/Sitka", "America/St_Barthelemy", "America/St_Johns", "America/St_Kitts", "America/St_Lucia", "America/St_Thomas", "America/St_Vincent", "America/Swift_Current", "America/Tegucigalpa", "America/Thule", "America/Thunder_Bay", "America/Tijuana", "America/Toronto", "America/Tortola", "America/Vancouver", "America/Virgin", "America/Whitehorse", "America/Winnipeg", "America/Yakutat", "America/Yellowknife", "Antarctica/Casey", "Antarctica/Davis", "Antarctica/DumontDUrville", "Antarctica/Macquarie", "Antarctica/Mawson", "Antarctica/McMurdo", "Antarctica/Palmer", "Antarctica/Rothera", "Antarctica/South_Pole", "Antarctica/Syowa", "Antarctica/Troll", "Antarctica/Vostok", "Arctic/Longyearbyen", "Asia/Aden", "Asia/Almaty", "Asia/Amman", "Asia/Anadyr", "Asia/Aqtau", "Asia/Aqtobe", "Asia/Ashgabat", "Asia/Ashkhabad", "Asia/Atyrau", "Asia/Baghdad", "Asia/Bahrain", "Asia/Baku", "Asia/Bangkok", "Asia/Barnaul", "Asia/Beirut", "Asia/Bishkek", "Asia/Brunei", "Asia/Calcutta", "Asia/Chita", "Asia/Choibalsan", "Asia/Chongqing", "Asia/Chungking", "Asia/Colombo", "Asia/Dacca", "Asia/Damascus", "Asia/Dhaka", "Asia/Dili", "Asia/Dubai", "Asia/Dushanbe", "Asia/Famagusta", "Asia/Gaza", "Asia/Harbin", "Asia/Hebron", "Asia/Ho_Chi_Minh", "Asia/Hong_Kong", "Asia/Hovd", "Asia/Irkutsk", "Asia/Istanbul", "Asia/Jakarta", "Asia/Jayapura", "Asia/Jerusalem", "Asia/Kabul", "Asia/Kamchatka", "Asia/Karachi", "Asia/Kashgar", "Asia/Kathmandu", "Asia/Katmandu", "Asia/Khandyga", "Asia/Kolkata", "Asia/Krasnoyarsk", "Asia/Kuala_Lumpur", "Asia/Kuching", "Asia/Kuwait", "Asia/Macao", "Asia/Macau", "Asia/Magadan", "Asia/Makassar", "Asia/Manila", "Asia/Muscat", "Asia/Nicosia", "Asia/Novokuznetsk", "Asia/Novosibirsk", "Asia/Omsk", "Asia/Oral", "Asia/Phnom_Penh", "Asia/Pontianak", "Asia/Pyongyang", "Asia/Qatar", "Asia/Qyzylorda", "Asia/Rangoon", "Asia/Riyadh", "Asia/Saigon", "Asia/Sakhalin", "Asia/Samarkand", "Asia/Seoul", "Asia/Shanghai", "Asia/Singapore", "Asia/Srednekolymsk", "Asia/Taipei", "Asia/Tashkent", "Asia/Tbilisi", "Asia/Tehran", "Asia/Tel_Aviv", "Asia/Thimbu", "Asia/Thimphu", "Asia/Tokyo", "Asia/Tomsk", "Asia/Ujung_Pandang", "Asia/Ulaanbaatar", "Asia/Ulan_Bator", "Asia/Urumqi", "Asia/Ust-Nera", "Asia/Vientiane", "Asia/Vladivostok", "Asia/Yakutsk", "Asia/Yangon", "Asia/Yekaterinburg", "Asia/Yerevan", "Atlantic/Azores", "Atlantic/Bermuda", "Atlantic/Canary", "Atlantic/Cape_Verde", "Atlantic/Faeroe", "Atlantic/Faroe", "Atlantic/Jan_Mayen", "Atlantic/Madeira", "Atlantic/Reykjavik", "Atlantic/South_Georgia", "Atlantic/St_Helena", "Atlantic/Stanley", "Australia/ACT", "Australia/Adelaide", "Australia/Brisbane", "Australia/Broken_Hill", "Australia/Canberra", "Australia/Currie", "Australia/Darwin", "Australia/Eucla", "Australia/Hobart", "Australia/LHI", "Australia/Lindeman", "Australia/Lord_Howe", "Australia/Melbourne", "Australia/NSW", "Australia/North", "Australia/Perth", "Australia/Queensland", "Australia/South", "Australia/Sydney", "Australia/Tasmania", "Australia/Victoria", "Australia/West", "Australia/Yancowinna", "Brazil/Acre", "Brazil/DeNoronha", "Brazil/East", "Brazil/West", "CET", "CST6CDT", "Canada/Atlantic", "Canada/Central", "Canada/Eastern", "Canada/Mountain", "Canada/Newfoundland", "Canada/Pacific", "Canada/Saskatchewan", "Canada/Yukon", "Chile/Continental", "Chile/EasterIsland", "Cuba", "EET", "EST", "EST5EDT", "Egypt", "Eire", "Etc/GMT", "Etc/GMT+0", "Etc/GMT+1", "Etc/GMT+10", "Etc/GMT+11", "Etc/GMT+12", "Etc/GMT+2", "Etc/GMT+3", "Etc/GMT+4", "Etc/GMT+5", "Etc/GMT+6", "Etc/GMT+7", "Etc/GMT+8", "Etc/GMT+9", "Etc/GMT-0", "Etc/GMT-1", "Etc/GMT-10", "Etc/GMT-11", "Etc/GMT-12", "Etc/GMT-13", "Etc/GMT-14", "Etc/GMT-2", "Etc/GMT-3", "Etc/GMT-4", "Etc/GMT-5", "Etc/GMT-6", "Etc/GMT-7", "Etc/GMT-8", "Etc/GMT-9", "Etc/GMT0", "Etc/Greenwich", "Etc/UCT", "Etc/UTC", "Etc/Universal", "Etc/Zulu", "Europe/Amsterdam", "Europe/Andorra", "Europe/Astrakhan", "Europe/Athens", "Europe/Belfast", "Europe/Belgrade", "Europe/Berlin", "Europe/Bratislava", "Europe/Brussels", "Europe/Bucharest", "Europe/Budapest", "Europe/Busingen", "Europe/Chisinau", "Europe/Copenhagen", "Europe/Dublin", "Europe/Gibraltar", "Europe/Guernsey", "Europe/Helsinki", "Europe/Isle_of_Man", "Europe/Istanbul", "Europe/Jersey", "Europe/Kaliningrad", "Europe/Kiev", "Europe/Kirov", "Europe/Lisbon", "Europe/Ljubljana", "Europe/London", "Europe/Luxembourg", "Europe/Madrid", "Europe/Malta", "Europe/Mariehamn", "Europe/Minsk", "Europe/Monaco", "Europe/Moscow", "Europe/Nicosia", "Europe/Oslo", "Europe/Paris", "Europe/Podgorica", "Europe/Prague", "Europe/Riga", "Europe/Rome", "Europe/Samara", "Europe/San_Marino", "Europe/Sarajevo", "Europe/Saratov", "Europe/Simferopol", "Europe/Skopje", "Europe/Sofia", "Europe/Stockholm", "Europe/Tallinn", "Europe/Tirane", "Europe/Tiraspol", "Europe/Ulyanovsk", "Europe/Uzhgorod", "Europe/Vaduz", "Europe/Vatican", "Europe/Vienna", "Europe/Vilnius", "Europe/Volgograd", "Europe/Warsaw", "Europe/Zagreb", "Europe/Zaporozhye", "Europe/Zurich", "GB", "GB-Eire", "GMT", "GMT+0", "GMT-0", "GMT0", "Greenwich", "HST", "Hongkong", "Iceland", "Indian/Antananarivo", "Indian/Chagos", "Indian/Christmas", "Indian/Cocos", "Indian/Comoro", "Indian/Kerguelen", "Indian/Mahe", "Indian/Maldives", "Indian/Mauritius", "Indian/Mayotte", "Indian/Reunion", "Iran", "Israel", "Jamaica", "Japan", "Kwajalein", "Libya", "MET", "MST", "MST7MDT", "Mexico/BajaNorte", "Mexico/BajaSur", "Mexico/General", "NZ", "NZ-CHAT", "Navajo", "PRC", "PST8PDT", "Pacific/Apia", "Pacific/Auckland", "Pacific/Bougainville", "Pacific/Chatham", "Pacific/Chuuk", "Pacific/Easter", "Pacific/Efate", "Pacific/Enderbury", "Pacific/Fakaofo", "Pacific/Fiji", "Pacific/Funafuti", "Pacific/Galapagos", "Pacific/Gambier", "Pacific/Guadalcanal", "Pacific/Guam", "Pacific/Honolulu", "Pacific/Johnston", "Pacific/Kiritimati", "Pacific/Kosrae", "Pacific/Kwajalein", "Pacific/Majuro", "Pacific/Marquesas", "Pacific/Midway", "Pacific/Nauru", "Pacific/Niue", "Pacific/Norfolk", "Pacific/Noumea", "Pacific/Pago_Pago", "Pacific/Palau", "Pacific/Pitcairn", "Pacific/Pohnpei", "Pacific/Ponape", "Pacific/Port_Moresby", "Pacific/Rarotonga", "Pacific/Saipan", "Pacific/Samoa", "Pacific/Tahiti", "Pacific/Tarawa", "Pacific/Tongatapu", "Pacific/Truk", "Pacific/Wake", "Pacific/Wallis", "Pacific/Yap", "Poland", "Portugal", "ROC", "ROK", "Singapore", "Turkey", "UCT", "US/Alaska", "US/Aleutian", "US/Arizona", "US/Central", "US/East-Indiana", "US/Eastern", "US/Hawaii", "US/Indiana-Starke", "US/Michigan", "US/Mountain", "US/Pacific", "US/Pacific-New", "US/Samoa", "UTC", "Universal", "W-SU", "WET", "Zulu"]
+          },
+          "children": {
+            "description": "Children ids",
+            "example": ["295cf2b0-5eae-45de-84dd-f1039d616aa7", "2683ae7a-c63a-434e-8ead-327c759823a1"],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["name", "birth_date"]
+      },
+      "PersonUpdateRequestSchema": {
+        "type": "object",
+        "properties": {
+          "parent_id": {
+            "type": "string",
+            "description": "Id of this person legal responsible"
+          },
+          "parent_access_clinical_data": {
+            "type": "boolean",
+            "description": "Share clinical data with parent user\n     \n* In case of no parent_id given, this field will be ignored\n     \n* When person has not an email, it's forced to true,\n     \n* Otherwhise it's assumed false when no value is given"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "CPF",
+            "example": "94819089846",
+            "pattern": "^\\d{3}\\d{3}\\d{3}\\d{2}$"
+          },
+          "registration": {
+            "type": "string",
+            "description": "Special Field like registration ID or social service ID"
+          },
+          "birth_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Birth Date"
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender",
+            "enum": ["F", "M"]
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "1112345678",
+            "pattern": "^\\d+$"
+          },
+          "phone_ddi": {
+            "type": "string",
+            "description": "Phone international code (DDI). When not given it's assumed +55 (Brazil)",
+            "example": "+55",
+            "pattern": "^\\+\\d+$",
+            "enum": ["+1", "+1242", "+1246", "+1264", "+1268", "+1284", "+1340", "+1441", "+1473", "+1649", "+1664", "+1670", "+1671", "+1684", "+1758", "+1767", "+1784", "+1849", "+1868", "+1869", "+1876", "+1939", "+20", "+211", "+212", "+213", "+216", "+218", "+220", "+221", "+222", "+223", "+224", "+225", "+226", "+227", "+228", "+229", "+230", "+231", "+232", "+233", "+234", "+235", "+236", "+237", "+238", "+239", "+240", "+241", "+242", "+243", "+244", "+245", "+246", "+248", "+249", "+250", "+251", "+252", "+253", "+254", "+255", "+256", "+257", "+258", "+260", "+261", "+262", "+263", "+264", "+265", "+266", "+267", "+268", "+269", "+27", "+290", "+291", "+297", "+298", "+299", "+30", "+31", "+32", "+33", "+34", "+345", "+350", "+351", "+352", "+353", "+354", "+355", "+356", "+357", "+358", "+359", "+36", "+370", "+371", "+372", "+373", "+374", "+375", "+376", "+377", "+378", "+379", "+380", "+381", "+382", "+385", "+386", "+387", "+389", "+39", "+40", "+41", "+420", "+421", "+423", "+43", "+44", "+45", "+46", "+47", "+48", "+49", "+500", "+501", "+502", "+503", "+504", "+505", "+506", "+507", "+508", "+509", "+51", "+52", "+53", "+54", "+55", "+56", "+57", "+58", "+590", "+591", "+593", "+594", "+595", "+596", "+597", "+598", "+599", "+60", "+61", "+62", "+63", "+64", "+65", "+66", "+670", "+672", "+673", "+674", "+675", "+676", "+677", "+678", "+679", "+680", "+681", "+682", "+683", "+685", "+686", "+687", "+688", "+689", "+690", "+691", "+692", "+7", "+77", "+81", "+82", "+84", "+850", "+852", "+853", "+855", "+856", "+86", "+872", "+880", "+886", "+90", "+91", "+92", "+93", "+94", "+95", "+960", "+961", "+962", "+963", "+964", "+965", "+966", "+967", "+968", "+970", "+971", "+972", "+973", "+974", "+975", "+976", "+977", "+98", "+992", "+993", "+994", "+995", "+996", "+998"]
+          },
+          "cell_phone": {
+            "type": "string",
+            "description": "Phone Number (if applicable)",
+            "example": "11912345678",
+            "pattern": "^\\d+$"
+          },
+          "cell_phone_ddi": {
+            "type": "string",
+            "description": "Cellphone international code (DDI). When not given it's assumed +55 (Brazil)",
+            "example": "+55",
+            "pattern": "^\\+\\d+$",
+            "enum": ["+1", "+1242", "+1246", "+1264", "+1268", "+1284", "+1340", "+1441", "+1473", "+1649", "+1664", "+1670", "+1671", "+1684", "+1758", "+1767", "+1784", "+1849", "+1868", "+1869", "+1876", "+1939", "+20", "+211", "+212", "+213", "+216", "+218", "+220", "+221", "+222", "+223", "+224", "+225", "+226", "+227", "+228", "+229", "+230", "+231", "+232", "+233", "+234", "+235", "+236", "+237", "+238", "+239", "+240", "+241", "+242", "+243", "+244", "+245", "+246", "+248", "+249", "+250", "+251", "+252", "+253", "+254", "+255", "+256", "+257", "+258", "+260", "+261", "+262", "+263", "+264", "+265", "+266", "+267", "+268", "+269", "+27", "+290", "+291", "+297", "+298", "+299", "+30", "+31", "+32", "+33", "+34", "+345", "+350", "+351", "+352", "+353", "+354", "+355", "+356", "+357", "+358", "+359", "+36", "+370", "+371", "+372", "+373", "+374", "+375", "+376", "+377", "+378", "+379", "+380", "+381", "+382", "+385", "+386", "+387", "+389", "+39", "+40", "+41", "+420", "+421", "+423", "+43", "+44", "+45", "+46", "+47", "+48", "+49", "+500", "+501", "+502", "+503", "+504", "+505", "+506", "+507", "+508", "+509", "+51", "+52", "+53", "+54", "+55", "+56", "+57", "+58", "+590", "+591", "+593", "+594", "+595", "+596", "+597", "+598", "+599", "+60", "+61", "+62", "+63", "+64", "+65", "+66", "+670", "+672", "+673", "+674", "+675", "+676", "+677", "+678", "+679", "+680", "+681", "+682", "+683", "+685", "+686", "+687", "+688", "+689", "+690", "+691", "+692", "+7", "+77", "+81", "+82", "+84", "+850", "+852", "+853", "+855", "+856", "+86", "+872", "+880", "+886", "+90", "+91", "+92", "+93", "+94", "+95", "+960", "+961", "+962", "+963", "+964", "+965", "+966", "+967", "+968", "+970", "+971", "+972", "+973", "+974", "+975", "+976", "+977", "+98", "+992", "+993", "+994", "+995", "+996", "+998"]
+          },
+          "profession": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "Accountant"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "person@example.dav.med.br"
+          },
+          "address": {
+            "description": "Endereço",
+            "additionalProperties": false,
+            "allOf": [{
+              "$ref": "#/components/schemas/AddressSchema"
+            }]
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Timezone of new user",
+            "enum": ["Africa/Abidjan", "Africa/Accra", "Africa/Addis_Ababa", "Africa/Algiers", "Africa/Asmara", "Africa/Asmera", "Africa/Bamako", "Africa/Bangui", "Africa/Banjul", "Africa/Bissau", "Africa/Blantyre", "Africa/Brazzaville", "Africa/Bujumbura", "Africa/Cairo", "Africa/Casablanca", "Africa/Ceuta", "Africa/Conakry", "Africa/Dakar", "Africa/Dar_es_Salaam", "Africa/Djibouti", "Africa/Douala", "Africa/El_Aaiun", "Africa/Freetown", "Africa/Gaborone", "Africa/Harare", "Africa/Johannesburg", "Africa/Juba", "Africa/Kampala", "Africa/Khartoum", "Africa/Kigali", "Africa/Kinshasa", "Africa/Lagos", "Africa/Libreville", "Africa/Lome", "Africa/Luanda", "Africa/Lubumbashi", "Africa/Lusaka", "Africa/Malabo", "Africa/Maputo", "Africa/Maseru", "Africa/Mbabane", "Africa/Mogadishu", "Africa/Monrovia", "Africa/Nairobi", "Africa/Ndjamena", "Africa/Niamey", "Africa/Nouakchott", "Africa/Ouagadougou", "Africa/Porto-Novo", "Africa/Sao_Tome", "Africa/Timbuktu", "Africa/Tripoli", "Africa/Tunis", "Africa/Windhoek", "America/Adak", "America/Anchorage", "America/Anguilla", "America/Antigua", "America/Araguaina", "America/Argentina/Buenos_Aires", "America/Argentina/Catamarca", "America/Argentina/ComodRivadavia", "America/Argentina/Cordoba", "America/Argentina/Jujuy", "America/Argentina/La_Rioja", "America/Argentina/Mendoza", "America/Argentina/Rio_Gallegos", "America/Argentina/Salta", "America/Argentina/San_Juan", "America/Argentina/San_Luis", "America/Argentina/Tucuman", "America/Argentina/Ushuaia", "America/Aruba", "America/Asuncion", "America/Atikokan", "America/Atka", "America/Bahia", "America/Bahia_Banderas", "America/Barbados", "America/Belem", "America/Belize", "America/Blanc-Sablon", "America/Boa_Vista", "America/Bogota", "America/Boise", "America/Buenos_Aires", "America/Cambridge_Bay", "America/Campo_Grande", "America/Cancun", "America/Caracas", "America/Catamarca", "America/Cayenne", "America/Cayman", "America/Chicago", "America/Chihuahua", "America/Coral_Harbour", "America/Cordoba", "America/Costa_Rica", "America/Creston", "America/Cuiaba", "America/Curacao", "America/Danmarkshavn", "America/Dawson", "America/Dawson_Creek", "America/Denver", "America/Detroit", "America/Dominica", "America/Edmonton", "America/Eirunepe", "America/El_Salvador", "America/Ensenada", "America/Fort_Nelson", "America/Fort_Wayne", "America/Fortaleza", "America/Glace_Bay", "America/Godthab", "America/Goose_Bay", "America/Grand_Turk", "America/Grenada", "America/Guadeloupe", "America/Guatemala", "America/Guayaquil", "America/Guyana", "America/Halifax", "America/Havana", "America/Hermosillo", "America/Indiana/Indianapolis", "America/Indiana/Knox", "America/Indiana/Marengo", "America/Indiana/Petersburg", "America/Indiana/Tell_City", "America/Indiana/Vevay", "America/Indiana/Vincennes", "America/Indiana/Winamac", "America/Indianapolis", "America/Inuvik", "America/Iqaluit", "America/Jamaica", "America/Jujuy", "America/Juneau", "America/Kentucky/Louisville", "America/Kentucky/Monticello", "America/Knox_IN", "America/Kralendijk", "America/La_Paz", "America/Lima", "America/Los_Angeles", "America/Louisville", "America/Lower_Princes", "America/Maceio", "America/Managua", "America/Manaus", "America/Marigot", "America/Martinique", "America/Matamoros", "America/Mazatlan", "America/Mendoza", "America/Menominee", "America/Merida", "America/Metlakatla", "America/Mexico_City", "America/Miquelon", "America/Moncton", "America/Monterrey", "America/Montevideo", "America/Montreal", "America/Montserrat", "America/Nassau", "America/New_York", "America/Nipigon", "America/Nome", "America/Noronha", "America/North_Dakota/Beulah", "America/North_Dakota/Center", "America/North_Dakota/New_Salem", "America/Ojinaga", "America/Panama", "America/Pangnirtung", "America/Paramaribo", "America/Phoenix", "America/Port-au-Prince", "America/Port_of_Spain", "America/Porto_Acre", "America/Porto_Velho", "America/Puerto_Rico", "America/Punta_Arenas", "America/Rainy_River", "America/Rankin_Inlet", "America/Recife", "America/Regina", "America/Resolute", "America/Rio_Branco", "America/Rosario", "America/Santa_Isabel", "America/Santarem", "America/Santiago", "America/Santo_Domingo", "America/Sao_Paulo", "America/Scoresbysund", "America/Shiprock", "America/Sitka", "America/St_Barthelemy", "America/St_Johns", "America/St_Kitts", "America/St_Lucia", "America/St_Thomas", "America/St_Vincent", "America/Swift_Current", "America/Tegucigalpa", "America/Thule", "America/Thunder_Bay", "America/Tijuana", "America/Toronto", "America/Tortola", "America/Vancouver", "America/Virgin", "America/Whitehorse", "America/Winnipeg", "America/Yakutat", "America/Yellowknife", "Antarctica/Casey", "Antarctica/Davis", "Antarctica/DumontDUrville", "Antarctica/Macquarie", "Antarctica/Mawson", "Antarctica/McMurdo", "Antarctica/Palmer", "Antarctica/Rothera", "Antarctica/South_Pole", "Antarctica/Syowa", "Antarctica/Troll", "Antarctica/Vostok", "Arctic/Longyearbyen", "Asia/Aden", "Asia/Almaty", "Asia/Amman", "Asia/Anadyr", "Asia/Aqtau", "Asia/Aqtobe", "Asia/Ashgabat", "Asia/Ashkhabad", "Asia/Atyrau", "Asia/Baghdad", "Asia/Bahrain", "Asia/Baku", "Asia/Bangkok", "Asia/Barnaul", "Asia/Beirut", "Asia/Bishkek", "Asia/Brunei", "Asia/Calcutta", "Asia/Chita", "Asia/Choibalsan", "Asia/Chongqing", "Asia/Chungking", "Asia/Colombo", "Asia/Dacca", "Asia/Damascus", "Asia/Dhaka", "Asia/Dili", "Asia/Dubai", "Asia/Dushanbe", "Asia/Famagusta", "Asia/Gaza", "Asia/Harbin", "Asia/Hebron", "Asia/Ho_Chi_Minh", "Asia/Hong_Kong", "Asia/Hovd", "Asia/Irkutsk", "Asia/Istanbul", "Asia/Jakarta", "Asia/Jayapura", "Asia/Jerusalem", "Asia/Kabul", "Asia/Kamchatka", "Asia/Karachi", "Asia/Kashgar", "Asia/Kathmandu", "Asia/Katmandu", "Asia/Khandyga", "Asia/Kolkata", "Asia/Krasnoyarsk", "Asia/Kuala_Lumpur", "Asia/Kuching", "Asia/Kuwait", "Asia/Macao", "Asia/Macau", "Asia/Magadan", "Asia/Makassar", "Asia/Manila", "Asia/Muscat", "Asia/Nicosia", "Asia/Novokuznetsk", "Asia/Novosibirsk", "Asia/Omsk", "Asia/Oral", "Asia/Phnom_Penh", "Asia/Pontianak", "Asia/Pyongyang", "Asia/Qatar", "Asia/Qyzylorda", "Asia/Rangoon", "Asia/Riyadh", "Asia/Saigon", "Asia/Sakhalin", "Asia/Samarkand", "Asia/Seoul", "Asia/Shanghai", "Asia/Singapore", "Asia/Srednekolymsk", "Asia/Taipei", "Asia/Tashkent", "Asia/Tbilisi", "Asia/Tehran", "Asia/Tel_Aviv", "Asia/Thimbu", "Asia/Thimphu", "Asia/Tokyo", "Asia/Tomsk", "Asia/Ujung_Pandang", "Asia/Ulaanbaatar", "Asia/Ulan_Bator", "Asia/Urumqi", "Asia/Ust-Nera", "Asia/Vientiane", "Asia/Vladivostok", "Asia/Yakutsk", "Asia/Yangon", "Asia/Yekaterinburg", "Asia/Yerevan", "Atlantic/Azores", "Atlantic/Bermuda", "Atlantic/Canary", "Atlantic/Cape_Verde", "Atlantic/Faeroe", "Atlantic/Faroe", "Atlantic/Jan_Mayen", "Atlantic/Madeira", "Atlantic/Reykjavik", "Atlantic/South_Georgia", "Atlantic/St_Helena", "Atlantic/Stanley", "Australia/ACT", "Australia/Adelaide", "Australia/Brisbane", "Australia/Broken_Hill", "Australia/Canberra", "Australia/Currie", "Australia/Darwin", "Australia/Eucla", "Australia/Hobart", "Australia/LHI", "Australia/Lindeman", "Australia/Lord_Howe", "Australia/Melbourne", "Australia/NSW", "Australia/North", "Australia/Perth", "Australia/Queensland", "Australia/South", "Australia/Sydney", "Australia/Tasmania", "Australia/Victoria", "Australia/West", "Australia/Yancowinna", "Brazil/Acre", "Brazil/DeNoronha", "Brazil/East", "Brazil/West", "CET", "CST6CDT", "Canada/Atlantic", "Canada/Central", "Canada/Eastern", "Canada/Mountain", "Canada/Newfoundland", "Canada/Pacific", "Canada/Saskatchewan", "Canada/Yukon", "Chile/Continental", "Chile/EasterIsland", "Cuba", "EET", "EST", "EST5EDT", "Egypt", "Eire", "Etc/GMT", "Etc/GMT+0", "Etc/GMT+1", "Etc/GMT+10", "Etc/GMT+11", "Etc/GMT+12", "Etc/GMT+2", "Etc/GMT+3", "Etc/GMT+4", "Etc/GMT+5", "Etc/GMT+6", "Etc/GMT+7", "Etc/GMT+8", "Etc/GMT+9", "Etc/GMT-0", "Etc/GMT-1", "Etc/GMT-10", "Etc/GMT-11", "Etc/GMT-12", "Etc/GMT-13", "Etc/GMT-14", "Etc/GMT-2", "Etc/GMT-3", "Etc/GMT-4", "Etc/GMT-5", "Etc/GMT-6", "Etc/GMT-7", "Etc/GMT-8", "Etc/GMT-9", "Etc/GMT0", "Etc/Greenwich", "Etc/UCT", "Etc/UTC", "Etc/Universal", "Etc/Zulu", "Europe/Amsterdam", "Europe/Andorra", "Europe/Astrakhan", "Europe/Athens", "Europe/Belfast", "Europe/Belgrade", "Europe/Berlin", "Europe/Bratislava", "Europe/Brussels", "Europe/Bucharest", "Europe/Budapest", "Europe/Busingen", "Europe/Chisinau", "Europe/Copenhagen", "Europe/Dublin", "Europe/Gibraltar", "Europe/Guernsey", "Europe/Helsinki", "Europe/Isle_of_Man", "Europe/Istanbul", "Europe/Jersey", "Europe/Kaliningrad", "Europe/Kiev", "Europe/Kirov", "Europe/Lisbon", "Europe/Ljubljana", "Europe/London", "Europe/Luxembourg", "Europe/Madrid", "Europe/Malta", "Europe/Mariehamn", "Europe/Minsk", "Europe/Monaco", "Europe/Moscow", "Europe/Nicosia", "Europe/Oslo", "Europe/Paris", "Europe/Podgorica", "Europe/Prague", "Europe/Riga", "Europe/Rome", "Europe/Samara", "Europe/San_Marino", "Europe/Sarajevo", "Europe/Saratov", "Europe/Simferopol", "Europe/Skopje", "Europe/Sofia", "Europe/Stockholm", "Europe/Tallinn", "Europe/Tirane", "Europe/Tiraspol", "Europe/Ulyanovsk", "Europe/Uzhgorod", "Europe/Vaduz", "Europe/Vatican", "Europe/Vienna", "Europe/Vilnius", "Europe/Volgograd", "Europe/Warsaw", "Europe/Zagreb", "Europe/Zaporozhye", "Europe/Zurich", "GB", "GB-Eire", "GMT", "GMT+0", "GMT-0", "GMT0", "Greenwich", "HST", "Hongkong", "Iceland", "Indian/Antananarivo", "Indian/Chagos", "Indian/Christmas", "Indian/Cocos", "Indian/Comoro", "Indian/Kerguelen", "Indian/Mahe", "Indian/Maldives", "Indian/Mauritius", "Indian/Mayotte", "Indian/Reunion", "Iran", "Israel", "Jamaica", "Japan", "Kwajalein", "Libya", "MET", "MST", "MST7MDT", "Mexico/BajaNorte", "Mexico/BajaSur", "Mexico/General", "NZ", "NZ-CHAT", "Navajo", "PRC", "PST8PDT", "Pacific/Apia", "Pacific/Auckland", "Pacific/Bougainville", "Pacific/Chatham", "Pacific/Chuuk", "Pacific/Easter", "Pacific/Efate", "Pacific/Enderbury", "Pacific/Fakaofo", "Pacific/Fiji", "Pacific/Funafuti", "Pacific/Galapagos", "Pacific/Gambier", "Pacific/Guadalcanal", "Pacific/Guam", "Pacific/Honolulu", "Pacific/Johnston", "Pacific/Kiritimati", "Pacific/Kosrae", "Pacific/Kwajalein", "Pacific/Majuro", "Pacific/Marquesas", "Pacific/Midway", "Pacific/Nauru", "Pacific/Niue", "Pacific/Norfolk", "Pacific/Noumea", "Pacific/Pago_Pago", "Pacific/Palau", "Pacific/Pitcairn", "Pacific/Pohnpei", "Pacific/Ponape", "Pacific/Port_Moresby", "Pacific/Rarotonga", "Pacific/Saipan", "Pacific/Samoa", "Pacific/Tahiti", "Pacific/Tarawa", "Pacific/Tongatapu", "Pacific/Truk", "Pacific/Wake", "Pacific/Wallis", "Pacific/Yap", "Poland", "Portugal", "ROC", "ROK", "Singapore", "Turkey", "UCT", "US/Alaska", "US/Aleutian", "US/Arizona", "US/Central", "US/East-Indiana", "US/Eastern", "US/Hawaii", "US/Indiana-Starke", "US/Michigan", "US/Mountain", "US/Pacific", "US/Pacific-New", "US/Samoa", "UTC", "Universal", "W-SU", "WET", "Zulu"]
+          }
+        },
+        "required": ["name", "birth_date"]
+      },
+      "PersonUpdateResponseSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identificator",
+            "pattern": "^[^\\s]+$"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    }
+  },
+  "security": [{
+    "ApiKeyAuth": []
+  }]
+}
