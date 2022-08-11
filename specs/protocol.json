@@ -1,0 +1,252 @@
+{
+    "openapi": "3.0.0",
+    "paths": {
+        "/protocol": {
+            "get": {
+                "operationId": "FlowAttendanceController_getAll",
+                "summary": "Pesquisa coleção de objetos protocol",
+                "description": "* PROTOCOLO de atendimento traz dados referentes a um atendimento feito por fila virtual.",
+                "parameters": [{
+                    "name": "x-exclusive-start-key",
+                    "required": false,
+                    "in": "header",
+                    "description": "key da ultima paginação",
+                    "schema": {
+                        "type": "string"
+                    }
+                }, {
+                    "name": "date_to",
+                    "required": false,
+                    "in": "query",
+                    "description": "Filter by date to",
+                    "example": "2021-05-27T21:08:56.099Z",
+                    "schema": {
+                        "type": "date-time"
+                    }
+                }, {
+                    "name": "date_from",
+                    "required": false,
+                    "in": "query",
+                    "description": "Filter by date from",
+                    "example": "2021-05-25T21:08:56.099Z",
+                    "schema": {
+                        "type": "date-time"
+                    }
+                }, {
+                    "name": "person",
+                    "required": false,
+                    "in": "query",
+                    "description": "Filter by person id",
+                    "example": "4a8259cd-955a-4b94-81e9-37e580a2ef1b",
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Protocol",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FlowAttendanceReadResponseSchema"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Protocol not found"
+                    }
+                },
+                "tags": ["read"],
+                "security": [{
+                    "ApiKeyAuth": []
+                }]
+            }
+        },
+        "/protocol/{protocol}": {
+            "get": {
+                "operationId": "FlowAttendanceController_get",
+                "summary": "Pesquisa um objeto protocol",
+                "description": "* PROTOCOLO de atendimento traz dados referentes a um atendimento feito por fila virtual.",
+                "parameters": [{
+                    "name": "protocol",
+                    "required": true,
+                    "in": "path",
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Protocol",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FlowAttendanceReadResponseSchema"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Protocol not found"
+                    }
+                },
+                "tags": ["read"],
+                "security": [{
+                    "ApiKeyAuth": []
+                }]
+            }
+        }
+    },
+    "info": {
+        "title": "Protocol",
+        "description": "Consulta a registros de protocolos da fila virtual",
+        "version": "1.0.0",
+        "contact": {}
+    },
+    "tags": [],
+    "servers": [{
+        "url": "https://api.v2.doutoraovivo.com.br",
+        "description": "ambiente de PRODUÇÃO"
+    }, {
+        "url": "https://api.v2.hom.doutoraovivo.com.br",
+        "description": "ambiente de HOMOLOGAÇÃO"
+    }],
+    "components": {
+        "schemas": {
+            "PersonSchema": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique Identificator",
+                        "pattern": "^[^\\s]+$"
+                    },
+                    "arrival": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Patient arrival date-time"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name"
+                    },
+                    "registration": {
+                        "type": "string",
+                        "description": "Special Field like registration ID or social service ID"
+                    }
+                },
+                "required": ["id", "arrival", "name"]
+            },
+            "InfoSchema": {
+                "type": "object",
+                "properties": {
+                    "professional_id": {
+                        "type": "string",
+                        "description": "Id of professional responsible for attendance"
+                    },
+                    "professional_name": {
+                        "type": "string",
+                        "description": "Name of professional reponsible for attendance"
+                    },
+                    "professional_crm": {
+                        "type": "string",
+                        "description": "CRM of professional reponsible for attendance"
+                    },
+                    "person_present": {
+                        "type": "boolean",
+                        "description": "Indicates whether person was online at attendance video room"
+                    },
+                    "professional_present": {
+                        "type": "boolean",
+                        "description": "Indicates whether professional was online at attendance video room"
+                    },
+                    "appointment_id": {
+                        "type": "string",
+                        "description": "Appointment id"
+                    },
+                    "notes": {
+                        "type": "string",
+                        "description": "Notes on the attendance"
+                    },
+                    "complaint": {
+                        "type": "string",
+                        "description": "Patient complaint"
+                    },
+                    "place_in_line": {
+                        "type": "string",
+                        "description": "Patient place in line"
+                    }
+                }
+            },
+            "HistorySchema": {
+                "type": "object",
+                "properties": {
+                    "ts": {
+                        "type": "string",
+                        "description": "Event timestamp"
+                    },
+                    "step": {
+                        "type": "string",
+                        "description": "Attendance step",
+                        "enum": ["FLOW_PERSON_ARRIVAL", "FLOW_PERSON_REPORT_COMPLAINT", "FLOW_PERSON_COMPLAINT_REPORTED", "FLOW_PERSON_WAITING_NEXT_GROUP", "FLOW_PERSON_CHECK_RESOURCES", "FLOW_PERSON_PERFORMING_PAYMENT", "FLOW_PERSON_PAYMENT_APPROVED", "FLOW_PERSON_PAYMENT_REPROVED", "FLOW_PERSON_READY_TO_BE_ATTENDED", "FLOW_PROFESSIONAL_READY_TO_ATTEND", "FLOW_ON_ATTENDANCE", "FLOW_PROFESSIONAL_END_ATTENDANCE", "FLOW_ON_POST_ATTENDANCE", "FLOW_PERSON_ON_NPS", "FLOW_PERSON_ON_END", "FLOW_PERSON_FINISH_ATTENDANCE", "FLOW_PERSON_FINISHED_BY_SYSTEM", "FLOW_PROFESSIONAL_FINISHED_BY_SYSTEM", "FLOW_FINISHED_BY_MANAGER"]
+                    },
+                    "next_group": {
+                        "type": "string",
+                        "description": "Next group of attendance"
+                    },
+                    "info": {
+                        "description": "Any info about attendance. EG: professional data, notes, appointment_id",
+                        "allOf": [{
+                            "$ref": "#/components/schemas/InfoSchema"
+                        }]
+                    }
+                },
+                "required": ["step"]
+            },
+            "FlowAttendanceReadResponseSchema": {
+                "type": "object",
+                "properties": {
+                    "protocol": {
+                        "type": "string",
+                        "description": "Attendance protocol"
+                    },
+                    "person": {
+                        "description": "Person",
+                        "additionalProperties": false,
+                        "allOf": [{
+                            "$ref": "#/components/schemas/PersonSchema"
+                        }]
+                    },
+                    "history": {
+                        "description": "Protocol history",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HistorySchema"
+                        }
+                    },
+                    "start_attendance": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date-time when video attendance has started"
+                    },
+                    "reason_finished": {
+                        "type": "string",
+                        "description": "Reason for finishing the protocol through manager panel"
+                    }
+                },
+                "required": ["protocol", "person", "history", "start_attendance"]
+            }
+        },
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "x-api-key"
+            }
+        }
+    },
+    "security": [{
+        "ApiKeyAuth": []
+    }]
+}

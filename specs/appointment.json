@@ -5,7 +5,7 @@
       "post": {
         "operationId": "CreateController_create",
         "summary": "Cria um objeto APPOINTMENT",
-        "description": "\n      Sobre o APPOINTMENT:\n        * APPOINTMENT representa um agendamento de telemedicina no sistema\n        * A data inicial START_DATE_TIME não pode estar no passado\n          e também não pode ser maior do que a data final END_DATE_TIME\n        * O appointment criado é gerado com o status AGE (Agendado)\n        * É preciso ter no mínimo 2 e no máximo 4 participantes\n        \n      Callback:\n        * Durante o atendimento, a sala envia informação sobre os eventos que ocorrem na sala entre os participantes, \n          como um participante entrar ou sair da sala ou o participante principal (Profissional) encerrar a sessão. \n          Isso é muito útil para o integrador poder avisar os participantes interessados (ex. push no celular/sms/email para o profissional \n          saber que o paciente o está esperando)\n        * Para utilizar essa opção, o cliente com a conta de administrador deve cadastrar uma URL de seu sistema que receberá um POST com o evento.\n        * Eventos enviados:\n            participantWaitingRoom - O participante entrou na sala de espera\n            participantConnected - O participante entrou no atendimento\n            participantDisconnected - O participante saiu da sala\n            sessionFinished - O participante principal encerrou a sessão\n            systemFinished - O sistema finalizou a consulta\n    ",
+        "description": "\n      Sobre o APPOINTMENT:\n        * APPOINTMENT representa um agendamento de telemedicina no sistema\n        * A data inicial START_DATE_TIME não pode estar no passado\n          e também não pode ser maior do que a data final END_DATE_TIME\n        * O appointment criado é gerado com o status AGE (Agendado)\n        * É preciso ter no mínimo 2 e no máximo 4 participantes\n        \n      Callback:\n        * Durante a utilização dos serviços de atendimento, é possível receber eventos de atualização enviados via POST, \n          Isso é muito útil para o integrador poder avisar os participantes interessados (ex. push no celular/sms/email para o profissional \n          saber que o paciente o está esperando)\n        * Para utilizar essa opção, o cliente com a conta de administrador deve cadastrar uma URL de seu sistema que receberá um POST com o evento.\n        * Eventos enviados:\n\n            Eventos de Sala de Atendimento:\n              participantWaitingRoom - O participante entrou na sala de espera\n              participantConnected - O participante entrou no atendimento\n              participantDisconnected - O participante saiu da sala\n              sessionFinished - O participante principal encerrou a sessão\n              systemFinished - O sistema finalizou a consulta\n\n            Eventos de Fila Virtual:\n            Gestor:\n              MANAGER_UPDATE_DASHBOARD - Atualização Dashboard \n              MANAGER_START_FLOW - Fila virtual iniciada \n              MANAGER_FINISH_FLOW - Finalização manual de protocolo \n            Paciente:\n              PERSON_ENTER_EMERGENCY - Acessou Fila Virtual \n              PERSON_COMPLAINT_REPORTED - Respondeu anamnese pré-consulta \n              PERSON_START_ATTENDANCE - Iniciou atendimento \n              PERSON_FINISH_ATTENDANCE - Finalizou atendimento \n              PERSON_LEAVE_EMERGENCY - Saiu da fila \n              PERSON_READY_TO_ATTENDANCE - Entrou na sala de pré-atendimento \n              PERSON_PLACE_IN_LINE - Atualizou posição na fila \n              PERSON_FORWARD_ATTENDANCE - Encaminhado para outra fila \n              PERSON_FINISH_BY_SYSTEM - Atendimento finalzado pelo sistema \n            Profissional:\n              PROFESSIONAL_REPORT_CHECKIN - Checkin na Fila \n              PROFESSIONAL_ASK_NEXT - Proximo paciente \n              PROFESSIONAL_READY_TO_ATTENDANCE - Entrou na sala de pré-atendimento \n              PROFESSIONAL_START_ATTENDANCE - Iniciou atendimento \n              PROFESSIONAL_FINISH_ATTENDANCE - Finalizou atendimento \n              PROFESSIONAL_LEAVE_EMERGENCY - Saiu da fila \n              PROFESSIONAL_FINISH_BY_SYSTEM - Atendimento finalizado pelo sistema\n    ",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -24,16 +24,13 @@
                     "title": "Retorno consulta cardiolista",
                     "start_date_time": "2021-07-16T20:35:00.000Z",
                     "end_date_time": "2021-07-16T20:45:00.000Z",
-                    "participants": [
-                      {
-                        "id": "65dcdd85-7740-4ec8-ad07-8c9053f040c4",
-                        "role": "MMD"
-                      },
-                      {
-                        "id": "fa2e0de9-ef36-4f0a-935a-a52c3c37ee1e",
-                        "role": "PAT"
-                      }
-                    ]
+                    "participants": [{
+                      "id": "65dcdd85-7740-4ec8-ad07-8c9053f040c4",
+                      "role": "MMD"
+                    }, {
+                      "id": "fa2e0de9-ef36-4f0a-935a-a52c3c37ee1e",
+                      "role": "PAT"
+                    }]
                   }
                 },
                 "full": {
@@ -44,16 +41,13 @@
                     "description": "Consulta para avaliar situação do paciente",
                     "start_date_time": "2021-07-16T20:35:00.000Z",
                     "end_date_time": "2021-07-16T20:45:00.000Z",
-                    "participants": [
-                      {
-                        "id": "65dcdd85-7740-4ec8-ad07-8c9053f040c4",
-                        "role": "MMD"
-                      },
-                      {
-                        "id": "fa2e0de9-ef36-4f0a-935a-a52c3c37ee1e",
-                        "role": "PAT"
-                      }
-                    ],
+                    "participants": [{
+                      "id": "65dcdd85-7740-4ec8-ad07-8c9053f040c4",
+                      "role": "MMD"
+                    }, {
+                      "id": "fa2e0de9-ef36-4f0a-935a-a52c3c37ee1e",
+                      "role": "PAT"
+                    }],
                     "notes": "Paciente estável",
                     "reason": "Retorno",
                     "orientation": "Não praticar exercícios físicos",
@@ -106,14 +100,10 @@
             }
           }
         },
-        "tags": [
-          "create"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ]
+        "tags": ["create"],
+        "security": [{
+          "ApiKeyAuth": []
+        }]
       }
     },
     "/appointment/{id}": {
@@ -121,16 +111,14 @@
         "operationId": "ReadController_get",
         "summary": "Pesquisa um objeto APPOINTMENT",
         "description": "Dados de atendimento de telemedicina no sistema",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
+        "parameters": [{
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
           }
-        ],
+        }],
         "responses": {
           "200": {
             "description": "Appointment",
@@ -146,30 +134,24 @@
             "description": "Appointment not found"
           }
         },
-        "tags": [
-          "read"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ]
+        "tags": ["read"],
+        "security": [{
+          "ApiKeyAuth": []
+        }]
       },
       "put": {
         "operationId": "UpdateController_update",
         "summary": "Substitui os dados de APPOINTMENT pelo que for enviado no corpo da requisição",
         "description": "\n    Sobre o APPOINTMENT:\n    * APPOINTMENT representa um agendamento de telemedicina no sistema\n    * A data inicial START_DATE_TIME não pode estar no passado\n      e também não pode ser maior do que a data final END_DATE_TIME\n    * O appointment criado é gerado com o status AGE (Agendado)\n    * É preciso ter no mínimo 2 e no máximo 4 participantes\n    * Apenas appointments com status AGE podem ser editados\n    * Se alguma propriedade não for enviada no corpo da requisição será deletada",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "O id do appointment",
-            "schema": {
-              "type": "string"
-            }
+        "parameters": [{
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "description": "O id do appointment",
+          "schema": {
+            "type": "string"
           }
-        ],
+        }],
         "requestBody": {
           "required": true,
           "content": {
@@ -212,30 +194,24 @@
             }
           }
         },
-        "tags": [
-          "update"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ]
+        "tags": ["update"],
+        "security": [{
+          "ApiKeyAuth": []
+        }]
       },
       "delete": {
         "operationId": "DeleteController_delete",
         "summary": "Exclui um objeto APPOINTMENT",
         "description": "\n    * A exclusão é LOGICA, ou seja, o registro permanece para consulta no sistema\n      sendo apenas inativado.\n    * Apenas appointments com status AGE podem ser deletados\n    ",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "O id do appointment",
-            "schema": {
-              "type": "string"
-            }
+        "parameters": [{
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "description": "O id do appointment",
+          "schema": {
+            "type": "string"
           }
-        ],
+        }],
         "responses": {
           "201": {
             "description": "Appointment successfully deleted.",
@@ -248,14 +224,10 @@
             }
           }
         },
-        "tags": [
-          "delete"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ]
+        "tags": ["delete"],
+        "security": [{
+          "ApiKeyAuth": []
+        }]
       }
     }
   },
@@ -266,16 +238,13 @@
     "contact": {}
   },
   "tags": [],
-  "servers": [
-    {
-      "url": "https://api.v2.doutoraovivo.com.br",
-      "description": "ambiente de PRODUÇÃO"
-    },
-    {
-      "url": "https://api.v2.hom.doutoraovivo.com.br",
-      "description": "ambiente de HOMOLOGAÇÃO"
-    }
-  ],
+  "servers": [{
+    "url": "https://api.v2.doutoraovivo.com.br",
+    "description": "ambiente de PRODUÇÃO"
+  }, {
+    "url": "https://api.v2.hom.doutoraovivo.com.br",
+    "description": "ambiente de HOMOLOGAÇÃO"
+  }],
   "components": {
     "schemas": {
       "ParticipantRequestSchema": {
@@ -288,19 +257,10 @@
           "role": {
             "type": "string",
             "description": "Types:* MMD - Main Professional* SMD - Specialist Professional* GMD - Invited Professional* PAT - Patient* PAC - Patient Escort",
-            "enum": [
-              "PAC",
-              "PAT",
-              "MMD",
-              "GMD",
-              "SMD"
-            ]
+            "enum": ["PAC", "PAT", "MMD", "GMD", "SMD"]
           }
         },
-        "required": [
-          "id",
-          "role"
-        ]
+        "required": ["id", "role"]
       },
       "AppointmentCreateRequestSchema": {
         "type": "object",
@@ -349,12 +309,7 @@
             }
           }
         },
-        "required": [
-          "title",
-          "start_date_time",
-          "end_date_time",
-          "participants"
-        ]
+        "required": ["title", "start_date_time", "end_date_time", "participants"]
       },
       "ParticipantResponseSchema": {
         "type": "object",
@@ -368,10 +323,7 @@
             "description": "Attendance URL"
           }
         },
-        "required": [
-          "id",
-          "url"
-        ]
+        "required": ["id", "url"]
       },
       "AppointmentCreateResponseSchema": {
         "type": "object",
@@ -390,10 +342,7 @@
             }
           }
         },
-        "required": [
-          "id",
-          "participants"
-        ]
+        "required": ["id", "participants"]
       },
       "i18nMessageConfig": {
         "type": "object",
@@ -412,11 +361,9 @@
           },
           "i18n": {
             "description": "For use with Frontend only",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/i18nMessageConfig"
-              }
-            ]
+            "allOf": [{
+              "$ref": "#/components/schemas/i18nMessageConfig"
+            }]
           },
           "detail": {
             "description": "Individual Messages",
@@ -430,11 +377,7 @@
             "description": "Trace ID - pass it to DaV support"
           }
         },
-        "required": [
-          "code",
-          "message",
-          "trace"
-        ]
+        "required": ["code", "message", "trace"]
       },
       "CallbackSchema": {
         "type": "object",
@@ -459,26 +402,34 @@
             "description": "participant cpf",
             "example": "45832378899"
           },
+          "protocol": {
+            "type": "string",
+            "description": "protocol",
+            "example": "2022022000001"
+          },
+          "next_group": {
+            "type": "string",
+            "description": "group name on emergency attendance",
+            "example": "Cardiologia"
+          },
+          "place_in_line": {
+            "type": "string",
+            "description": "patient place in line on emergency attendance",
+            "example": 10
+          },
+          "professional_license": {
+            "type": "string",
+            "description": "professional license",
+            "example": "11232/SP"
+          },
           "event": {
             "type": "string",
             "description": "event type",
             "example": "participantWaitingRoom",
-            "enum": [
-              "participantConnected",
-              "participantDisconnected",
-              "participantWaitingRoom",
-              "sessionFinished",
-              "systemFinished"
-            ]
+            "enum": ["MANAGER_FINISH_FLOW", "MANAGER_START_FLOW", "MANAGER_UPDATE_DASHBOARD", "PERSON_COMPLAINT_REPORTED", "PERSON_ENTER_EMERGENCY", "PERSON_FINISH_ATTENDANCE", "PERSON_FINISH_BY_SYSTEM", "PERSON_FORWARD_ATTENDANCE", "PERSON_LEAVE_EMERGENCY", "PERSON_PLACE_IN_LINE", "PERSON_READY_TO_ATTENDANCE", "PERSON_START_ATTENDANCE", "PROFESSIONAL_ASK_NEXT", "PROFESSIONAL_FINISH_ATTENDANCE", "PROFESSIONAL_FINISH_BY_SYSTEM", "PROFESSIONAL_LEAVE_EMERGENCY", "PROFESSIONAL_READY_TO_ATTENDANCE", "PROFESSIONAL_REPORT_CHECKIN", "PROFESSIONAL_START_ATTENDANCE", "participantConnected", "participantDisconnected", "participantWaitingRoom", "sessionFinished", "systemFinished"]
           }
         },
-        "required": [
-          "appointment",
-          "participant_id",
-          "name",
-          "cpf",
-          "event"
-        ]
+        "required": ["appointment", "participant_id", "name", "cpf", "event"]
       },
       "ParticipantSchema": {
         "type": "object",
@@ -490,23 +441,14 @@
           "role": {
             "type": "string",
             "description": "Types:* MMD - Main Professional* SMD - Specialist Professional* GMD - Invited Professional* PAT - Patient* PAC - Patient Escort",
-            "enum": [
-              "PAC",
-              "PAT",
-              "MMD",
-              "GMD",
-              "SMD"
-            ]
+            "enum": ["PAC", "PAT", "MMD", "GMD", "SMD"]
           },
           "time_in_appointment": {
             "type": "number",
             "description": "Participant time in appointment"
           }
         },
-        "required": [
-          "id",
-          "role"
-        ]
+        "required": ["id", "role"]
       },
       "FileSchema": {
         "type": "object",
@@ -533,13 +475,7 @@
             "description": "Id of participant responsible for the file"
           }
         },
-        "required": [
-          "date",
-          "encoded",
-          "file_path",
-          "nameOriginal",
-          "participant"
-        ]
+        "required": ["date", "encoded", "file_path", "nameOriginal", "participant"]
       },
       "MessageSchema": {
         "type": "object",
@@ -558,11 +494,7 @@
             "description": "Id of participant responsible for the file"
           }
         },
-        "required": [
-          "date",
-          "message",
-          "participant"
-        ]
+        "required": ["date", "message", "participant"]
       },
       "RecordSchema": {
         "type": "object",
@@ -585,12 +517,7 @@
             "description": "Video url path"
           }
         },
-        "required": [
-          "date",
-          "duration",
-          "size",
-          "url"
-        ]
+        "required": ["date", "duration", "size", "url"]
       },
       "ConnectionSchema": {
         "type": "object",
@@ -610,11 +537,7 @@
             "description": "Id of participant connected to appointment"
           }
         },
-        "required": [
-          "dateStart",
-          "dateEnd",
-          "participant"
-        ]
+        "required": ["dateStart", "dateEnd", "participant"]
       },
       "ResumeSessionSchema": {
         "type": "object",
@@ -624,9 +547,7 @@
             "description": "Total appointment duration in seconds"
           }
         },
-        "required": [
-          "total_appointment_time"
-        ]
+        "required": ["total_appointment_time"]
       },
       "Cid10Schema": {
         "type": "object",
@@ -648,12 +569,7 @@
             "description": "Cid10 value"
           }
         },
-        "required": [
-          "category",
-          "code",
-          "subcategory",
-          "value"
-        ]
+        "required": ["category", "code", "subcategory", "value"]
       },
       "UpshotSchema": {
         "type": "object",
@@ -667,10 +583,7 @@
             "description": "Upshot value"
           }
         },
-        "required": [
-          "code",
-          "value"
-        ]
+        "required": ["code", "value"]
       },
       "PrescriptionDataSchema": {
         "type": "object",
@@ -702,16 +615,7 @@
           "status_appointment": {
             "type": "string",
             "description": "Appointment statusTipos:* `AGE` - Agendada* `INI` - Inicializada* `REA` - Realizada* `REM` - Realizada Manualmente* `CAN` - Cancelada* `CAS` - Cancelada pelo sistema - O sistema detectou que a consulta não foi inicializada e cancelou automaticamente* `NRE` - Não realizada - Um ou mais participantes não compareceram* `SUM` - Sumarizando - Calculando tempos dos participantes e tempo total de uma consulta* Após consulta Inicializada ou Realizada não será permitido alterar dados do agendamento",
-            "enum": [
-              "AGE",
-              "CAN",
-              "CAS",
-              "INI",
-              "NRE",
-              "REA",
-              "REM",
-              "SUM"
-            ]
+            "enum": ["AGE", "CAN", "CAS", "INI", "NRE", "REA", "REM", "SUM"]
           },
           "description": {
             "type": "string",
@@ -783,29 +687,23 @@
           "resume_session": {
             "description": "Resumo da sessão",
             "additionalProperties": false,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ResumeSessionSchema"
-              }
-            ]
+            "allOf": [{
+              "$ref": "#/components/schemas/ResumeSessionSchema"
+            }]
           },
           "cid10": {
             "description": "Cid10",
             "additionalProperties": false,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Cid10Schema"
-              }
-            ]
+            "allOf": [{
+              "$ref": "#/components/schemas/Cid10Schema"
+            }]
           },
           "upshot": {
             "description": "Upshot",
             "additionalProperties": false,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UpshotSchema"
-              }
-            ]
+            "allOf": [{
+              "$ref": "#/components/schemas/UpshotSchema"
+            }]
           },
           "prescription_data": {
             "description": "Prescription data",
@@ -813,16 +711,13 @@
             "items": {
               "$ref": "#/components/schemas/PrescriptionDataSchema"
             }
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Defines whether the appointment is active"
           }
         },
-        "required": [
-          "id",
-          "title",
-          "status_appointment",
-          "start_date_time",
-          "end_date_time",
-          "participants"
-        ]
+        "required": ["id", "title", "status_appointment", "start_date_time", "end_date_time", "participants"]
       },
       "AppointmentUpdateRequestSchema": {
         "type": "object",
@@ -871,12 +766,7 @@
             }
           }
         },
-        "required": [
-          "title",
-          "start_date_time",
-          "end_date_time",
-          "participants"
-        ]
+        "required": ["title", "start_date_time", "end_date_time", "participants"]
       },
       "AppointmentUpdateResponseSchema": {
         "type": "object",
@@ -895,10 +785,7 @@
             }
           }
         },
-        "required": [
-          "id",
-          "participants"
-        ]
+        "required": ["id", "participants"]
       },
       "AppointmentMinimalResponseSchema": {
         "type": "object",
@@ -908,9 +795,7 @@
             "description": "Appointment id"
           }
         },
-        "required": [
-          "id"
-        ]
+        "required": ["id"]
       }
     },
     "securitySchemes": {
@@ -921,9 +806,7 @@
       }
     }
   },
-  "security": [
-    {
-      "ApiKeyAuth": []
-    }
-  ]
+  "security": [{
+    "ApiKeyAuth": []
+  }]
 }
