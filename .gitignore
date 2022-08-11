@@ -1,5 +1,6 @@
 .history/
 .vs/
 .vscode/
+.idea/
 catalog/dist/
 catalog/node_modules/
